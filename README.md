@@ -97,10 +97,23 @@ npm start
 
 ## Architecture
 
-- `index.html` - Main PWA application
+### Frontend Structure
+- `index.html` - Clean HTML structure
+- `css/styles.css` - All styling separated
+- `js/` - Modular JavaScript:
+  - `app.js` - Main application logic
+  - `api.js` - Claude API integration
+  - `storage.js` - LocalStorage management
+  - `ui.js` - UI rendering and updates
+  - `health.js` - Health issues functionality
+- `sw.js` - Service worker for offline support
+
+### Backend
 - `api/claude.js` - Vercel serverless function
-- `healthiq-gist.html` - Standalone version for GitHub Gist
 - `vercel.json` - Vercel configuration
+
+### Standalone
+- `healthiq-gist.html` - All-in-one version for GitHub Gist
 
 ## License & Usage
 

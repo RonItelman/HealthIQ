@@ -1,0 +1,617 @@
+/* HealthIQ Styles */
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #f8fafc;
+    height: 100vh;
+    overflow: hidden;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+}
+
+/* Layout */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 16px;
+    gap: 16px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.app-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    letter-spacing: -0.5px;
+}
+
+/* Stats */
+.stats {
+    display: flex;
+    gap: 16px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 18px;
+    font-weight: 600;
+    color: #3b82f6;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+}
+
+/* Text Area */
+.text-area {
+    flex: 1;
+    width: 100%;
+    padding: 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    background: white;
+    color: #334155;
+    transition: border-color 0.2s ease;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.text-area:focus {
+    border-color: #3b82f6;
+}
+
+.text-area::placeholder {
+    color: #666;
+    font-style: italic;
+}
+
+/* Buttons */
+.button-container {
+    display: flex;
+    gap: 12px;
+    height: 60px;
+}
+
+.btn {
+    flex: 1;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    touch-action: manipulation;
+    gap: 6px;
+}
+
+.btn-log {
+    background: #3b82f6;
+}
+
+.btn-view {
+    background: #6b7280;
+}
+
+.btn-health {
+    background: #8b5cf6;
+}
+
+.btn-health:hover, .btn-health:active {
+    background: #7c3aed;
+}
+
+.btn:hover, .btn:active {
+    transform: translateY(-1px);
+    box-shadow: none;
+}
+
+.btn-log:hover, .btn-log:active {
+    background: #2563eb;
+}
+
+.btn-view:hover, .btn-view:active {
+    background: #4b5563;
+}
+
+.btn-header {
+    height: auto;
+    padding: 8px 12px;
+    font-size: 14px;
+    gap: 12px;
+    min-width: 120px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+}
+
+.btn-stat-number {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.btn-stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+.btn-stat-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Celebration animation */
+@keyframes celebrate {
+    0% {
+        transform: scale(1);
+        background: #6b7280;
+    }
+    20% {
+        transform: scale(1.1);
+        background: #10b981;
+    }
+    100% {
+        transform: scale(1);
+        background: #6b7280;
+    }
+}
+
+.btn-header.celebrating {
+    animation: celebrate 5s ease-out;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    padding: 0;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: none;
+    border: none;
+}
+
+.modal-header {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background: transparent;
+    color: #334155;
+    border-bottom: none;
+}
+
+.modal-close-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.modal-btn {
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    color: #374151;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    min-height: 44px;
+    box-shadow: none;
+}
+
+.modal-close-btn {
+    background: transparent;
+    border: none;
+    color: #ef4444;
+    font-size: 24px;
+    width: 48px;
+    height: 48px;
+}
+
+.modal-close-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 50%;
+}
+
+.modal-btn:hover, .modal-btn:active {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    transform: scale(1.05);
+}
+
+.modal-close-btn:hover, .modal-close-btn:active {
+    transform: none;
+}
+
+.modal-body {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #fefefe;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Log Entries */
+.log-entry {
+    background: white;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: none;
+    border: 1px solid #f1f5f9;
+    border-left: 3px solid #3b82f6;
+}
+
+.log-timestamp {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.log-content {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+}
+
+.empty-state {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 40px;
+}
+
+/* Toast notification */
+.toast {
+    position: fixed;
+    bottom: calc(20px + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    background: #374151;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: none;
+}
+
+.toast.show {
+    opacity: 1;
+}
+
+/* Summary table styles */
+.summary-table {
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.summary-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.summary-table th {
+    background: #f1f5f9;
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.summary-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #374151;
+}
+
+.summary-table tr:last-child td {
+    border-bottom: none;
+}
+
+.summary-count {
+    font-weight: 600;
+    color: #3b82f6;
+}
+
+/* PWA Install prompt */
+.install-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #3b82f6;
+    color: white;
+    padding: 16px;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1001;
+}
+
+.install-banner button {
+    background: white;
+    color: #3b82f6;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Health modal styles */
+.health-textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    outline: none;
+    background: white;
+    color: #334155;
+    margin-bottom: 16px;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.health-textarea:focus {
+    border-color: #8b5cf6;
+}
+
+.btn-analyze {
+    width: 100%;
+    background: #8b5cf6;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    transition: all 0.2s ease;
+}
+
+.btn-analyze:hover {
+    background: #7c3aed;
+}
+
+.btn-analyze:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.analysis-result {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.analysis-result h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.log-entry-analysis {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 12px;
+    font-size: 14px;
+    color: #0369a1;
+}
+
+.log-entry-health {
+    background: #faf5ff;
+    border: 1px solid #e9d5ff;
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 8px;
+    font-size: 13px;
+    color: #6b21a8;
+}
+
+.meta-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.meta-tag {
+    background: #e0e7ff;
+    color: #4338ca;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Error State */
+.error-message {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+/* Loading screen */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #3b82f6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+
+.loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.app-logo {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #3b82f6;
+    margin-bottom: 20px;
+}
+
+.loading-text {
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* Material Symbols Outlined */
+.material-symbols-outlined {
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+    font-size: 20px;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+/* Icon fallback for offline mode */
+.icon-text {
+    display: none;
+}
+
+.offline .material-symbols-outlined {
+    display: none;
+}
+
+.offline .icon-text {
+    display: inline;
+}
