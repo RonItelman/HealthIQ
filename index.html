@@ -820,8 +820,12 @@
     <script>
         // Configuration
         const SPLASH_ANIMATION_TIME = 1500; // milliseconds - adjust this to change loading screen duration
-        // Note: API key is now handled by the proxy server using environment variables
-        const CLAUDE_PROXY_URL = 'http://localhost:3001/api/claude';
+        
+        // Auto-detect API endpoint - works locally and on Vercel
+        const CLAUDE_PROXY_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3001/api/claude'  // For local development
+            : '/api/claude';  // For Vercel deployment
+            
         const CLAUDE_MODEL = 'claude-3-sonnet-20240229';
         
         // Store log entries in localStorage

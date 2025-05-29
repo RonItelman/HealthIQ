@@ -1,15 +1,14 @@
 {
-  "name": "healthiq-proxy",
+  "name": "healthiq",
   "version": "1.0.0",
-  "description": "Proxy server for HealthIQ Claude API integration",
-  "main": "claude-proxy.js",
+  "description": "AI-powered health tracking PWA",
   "scripts": {
-    "start": "node claude-proxy.js",
-    "install-deps": "npm install express cors node-fetch@2"
+    "dev": "vercel dev",
+    "build": "echo 'No build required'",
+    "start": "vercel dev"
   },
-  "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "node-fetch": "^2.7.0"
+  "dependencies": {},
+  "devDependencies": {
+    "vercel": "^32.0.0"
   }
 }

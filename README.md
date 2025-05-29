@@ -12,54 +12,66 @@ A Progressive Web App (PWA) for health tracking with AI-powered analysis using C
 - 🔍 Search and filter functionality
 - 📤 Export data capabilities
 
-## Setup
+## Quick Start (Mobile-Friendly)
 
-### 1. Clone the repository
+### Option 1: Use via Vercel (Recommended) 🚀
+
+1. **Deploy to Vercel** (one-click):
+   - Click here: [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/RonItelman/HealthIQ)
+   - Add your Anthropic API key as environment variable: `CLAUDE_API_KEY`
+   - Deploy!
+
+2. **Access on your phone**:
+   - Visit your Vercel URL (e.g., `https://your-app.vercel.app`)
+   - Add to home screen for app-like experience
+
+### Option 2: Use via GitHub Gist (Simplest) 📱
+
+1. **Create a Gist**:
+   - Copy contents of `healthiq-gist.html`
+   - Create new Gist at [gist.github.com](https://gist.github.com)
+   - Save as `healthiq.html`
+
+2. **Access on phone**:
+   - Open the Gist
+   - Click "Raw" button
+   - Bookmark the page
+   - Configure your Vercel API endpoint when prompted
+
+### Option 3: Local Development
+
+1. Clone and install:
 ```bash
 git clone https://github.com/RonItelman/HealthIQ.git
 cd HealthIQ
-```
-
-### 2. Install dependencies
-```bash
 npm install
 ```
 
-### 3. Set up your Anthropic API key
+2. Set up API key:
 ```bash
-# Copy the example environment file
 cp .env.example .env
-
 # Edit .env and add your Anthropic API key
-# Get your API key from: https://console.anthropic.com/
 ```
 
-### 4. Run the proxy server
+3. Run locally:
 ```bash
 npm start
 ```
 
-### 5. Open the app
-- Open `index.html` in your browser
-- Or for mobile: host the files and access via your phone's browser
+## Mobile Setup Guide
 
-## Mobile Usage
+### For Vercel Deployment:
+1. Fork this repository
+2. Sign up for [Vercel](https://vercel.com) (free)
+3. Import your forked repository
+4. Add environment variable: `CLAUDE_API_KEY` = your API key
+5. Deploy and access from any device!
 
-### Option 1: Local Network (Recommended for testing)
-1. Run the proxy server on your computer
-2. Find your computer's local IP address
-3. Update `CLAUDE_PROXY_URL` in `index.html` to use your IP (e.g., `http://192.168.1.100:3001/api/claude`)
-4. Access the app from your phone's browser
-
-### Option 2: GitHub Pages (Without AI features)
-1. Enable GitHub Pages in repository settings
-2. Access via: `https://[your-username].github.io/HealthIQ`
-3. Note: AI features won't work without the proxy server
-
-### Option 3: Install as PWA
-1. Open the app in your mobile browser
-2. Click "Add to Home Screen" when prompted
-3. The app will work offline (except for AI features)
+### For Gist Method:
+1. No server needed - runs entirely in browser
+2. First time: app will prompt for your Vercel API URL
+3. Your API endpoint is saved locally on device
+4. Works offline (except AI features)
 
 ## Architecture
 
