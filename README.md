@@ -98,9 +98,16 @@ npm start
 ## Architecture
 
 - `index.html` - Main PWA application
-- `claude-proxy.js` - Node.js proxy server for Claude API
-- `package.json` - Dependencies for the proxy server
+- `api/claude.js` - Vercel serverless function
+- `healthiq-gist.html` - Standalone version for GitHub Gist
+- `vercel.json` - Vercel configuration
 
-## Security Note
+## License & Usage
 
-Never commit your API key to the repository. Always use environment variables.
+This is open source software. Feel free to:
+- Use for personal health tracking
+- Deploy your own instance
+- Modify for your needs
+- Share with others who need it
+
+See [COMMERCIALIZATION.md](COMMERCIALIZATION.md) for business use guidelines.
