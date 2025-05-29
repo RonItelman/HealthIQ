@@ -98,14 +98,17 @@ npm start
 ## Architecture
 
 ### Frontend Structure
-- `index.html` - Clean HTML structure
+- `index.html` - Clean HTML structure (167 lines)
 - `css/styles.css` - All styling separated
-- `js/` - Modular JavaScript:
-  - `app.js` - Main application logic
+- `js/` - Highly modular JavaScript:
+  - `app.js` - Main coordinator (75 lines)
   - `api.js` - Claude API integration
   - `storage.js` - LocalStorage management
   - `ui.js` - UI rendering and updates
   - `health.js` - Health issues functionality
+  - `logs.js` - Log entry management
+  - `events.js` - Event handling
+  - `pwa.js` - Progressive Web App features
 - `sw.js` - Service worker for offline support
 
 ### Backend
