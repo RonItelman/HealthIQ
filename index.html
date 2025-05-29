@@ -1366,7 +1366,6 @@
         
         // Claude API functions
         async function callClaudeAPI(prompt) {
-            // First try the proxy server
             try {
                 const response = await fetch(CLAUDE_PROXY_URL, {
                     method: 'POST',
@@ -1390,37 +1389,6 @@
                 const data = await response.json();
                 return data.content[0].text;
             } catch (error) {
-                // If proxy fails, try direct API (only works on served pages)
-                if (window.location.protocol !== 'file:') {
-                    try {
-                        const response = await fetch(CLAUDE_API_URL, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'x-api-key': CLAUDE_API_KEY,
-                                'anthropic-version': '2023-06-01'
-                            },
-                            body: JSON.stringify({
-                                model: CLAUDE_MODEL,
-                                max_tokens: 1024,
-                                messages: [{
-                                    role: 'user',
-                                    content: prompt
-                                }]
-                            })
-                        });
-                        
-                        if (!response.ok) {
-                            throw new Error(`API Error: ${response.status}`);
-                        }
-                        
-                        const data = await response.json();
-                        return data.content[0].text;
-                    } catch (directError) {
-                        console.error('Direct API Error:', directError);
-                    }
-                }
-                
                 // Fall back to manual mode
                 console.error('Claude API Error:', error);
                 showToast('API unavailable. Using manual mode.');
