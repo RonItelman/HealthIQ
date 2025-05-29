@@ -73,6 +73,28 @@ npm start
 3. Your API endpoint is saved locally on device
 4. Works offline (except AI features)
 
+## Security & Privacy
+
+### Your Data is Safe:
+- ✅ **Health data stays on YOUR device** (localStorage)
+- ✅ **API key stored in Vercel** (not in code)
+- ✅ **Each deployment is isolated** to your account
+- ✅ **No data is sent anywhere** except to Claude for analysis
+
+### Security Best Practices:
+1. **Keep your Vercel app URL private** if you want exclusive access
+2. **Add domain restrictions** (optional):
+   - Set `ALLOWED_ORIGINS` in Vercel environment variables
+   - Example: `https://your-gist-url.github.io,http://localhost:3000`
+3. **Your health entries are never uploaded** - they stay in your browser
+4. **The public repository contains no personal data**
+
+### What Others Can See:
+- ❌ Your API key (hidden in Vercel)
+- ❌ Your health data (stored locally)  
+- ✅ The app code (open source)
+- ✅ Your Vercel app URL (if you share it)
+
 ## Architecture
 
 - `index.html` - Main PWA application

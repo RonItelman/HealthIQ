@@ -1,7 +1,14 @@
 export default async function handler(req, res) {
-  // Enable CORS
+  // Enable CORS - you can restrict this to specific domains
+  const allowedOrigins = process.env.ALLOWED_ORIGINS ? 
+    process.env.ALLOWED_ORIGINS.split(',') : ['*'];
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+  }
+  
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
     'Access-Control-Allow-Headers',
@@ -17,6 +24,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Optional: Add rate limiting check
+  const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  
   const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
   
   if (!CLAUDE_API_KEY) {
