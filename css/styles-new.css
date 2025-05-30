@@ -1,87 +1,33 @@
-/* HealthIQ Styles */
+/* HealthIQ Main Styles - Imports existing modular CSS files */
 
-/* Reset and Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-}
+/* Base styles - Reset, Variables, Typography */
+@import 'base.css';
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: #f8fafc;
-    height: 100vh;
-    overflow: hidden;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-}
+/* Layout - Core structures */
+@import 'layout.css';
 
-/* Layout */
-.container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    padding: 16px;
-    gap: 16px;
-}
+/* Components - TODO: Split these into separate files */
+/* @import 'components/buttons.css'; */
+/* @import 'components/modals.css'; */
+/* @import 'components/forms.css'; */
+/* @import 'components/stats.css'; */
+/* @import 'components/toast.css'; */
 
-/* Header */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid #e2e8f0;
-}
+/* Views - TODO: Split these into separate files */
+/* @import 'views/logs.css'; */
+/* @import 'views/health.css'; */
 
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+/* Utilities - TODO: Create this file */
+/* @import 'utilities.css'; */
 
-.header-logo {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-}
-
-/* Action Row */
-.action-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 0;
-    margin-top: -8px;
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.app-name {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1f2937;
-    letter-spacing: -0.5px;
-    display: flex;
-    align-items: center;
-}
+/* All remaining styles below */
 
 /* Stats */
 .stats {
     display: flex;
     gap: 16px;
     font-size: 14px;
-    color: #6b7280;
+    color: var(--text-muted);
 }
 
 .stat {
@@ -94,7 +40,7 @@ body {
 .stat-number {
     font-size: 18px;
     font-weight: 600;
-    color: #3b82f6;
+    color: var(--primary-color);
     line-height: 1;
 }
 
@@ -105,46 +51,27 @@ body {
     margin-top: 2px;
 }
 
-/* Text Area */
-.text-area {
-    flex: 1;
-    width: 100%;
-    padding: 20px;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 16px;
-    font-family: inherit;
-    resize: none;
-    outline: none;
-    background: white;
-    color: #334155;
-    transition: border-color 0.2s ease;
-    -webkit-user-select: text;
-    user-select: text;
-    max-height: 200px;
-    min-height: 120px;
-}
-
-.text-area:focus {
-    border-color: #3b82f6;
-}
-
-.text-area::placeholder {
-    color: #666;
-    font-style: italic;
-}
-
-/* Buttons */
-.button-container {
-    display: flex;
-    gap: 12px;
-    height: 60px;
-}
-
 .btn {
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+    gap: 6px;
+    
+
+}
+
+/* Buttons - Will be moved to components/buttons.css */
+#logBtn {
     flex: 1;
     border: none;
-    
+    border-radius: var(--radius-md);
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
@@ -159,19 +86,21 @@ body {
 }
 
 .btn-log {
-    background: #3b82f6;
+    background: var(--primary-color);
 }
 
 .btn-view {
-    background: #6b7280;
+    background: transparent;
+    color: #222;
 }
 
 .btn-health {
-    background: #8b5cf6;
+    background: transparent;
+    color: #222;
 }
 
 .btn-health:hover, .btn-health:active {
-    background: #7c3aed;
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .btn:hover, .btn:active {
@@ -184,18 +113,36 @@ body {
 }
 
 .btn-view:hover, .btn-view:active {
-    background: #4b5563;
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .btn-header {
+    flex: 0 0 auto;  /* Don't grow to fill space */
+    width: auto;     /* Auto width based on content */
     height: auto;
-    padding: 8px 12px;
+    padding: 8px 16px;
     font-size: 14px;
-    gap: 12px;
-    min-width: 120px;
+    gap: 8px;
+    min-width: auto;
     position: relative;
     overflow: hidden;
 }
+
+/* Dark icons for transparent buttons */
+.btn-view .material-symbols-outlined,
+.btn-health .material-symbols-outlined {
+    color: #222;
+}
+
+/* Add spacing after health button */
+.btn-health {
+    margin-right: 20px;
+}
+
+/* Alternative: Push view button to far right */
+/* .btn-view {
+    margin-left: auto;
+} */
 
 .btn-stats {
     display: flex;
@@ -232,15 +179,15 @@ body {
 @keyframes celebrate {
     0% {
         transform: scale(1);
-        background: #6b7280;
+        background: var(--secondary-color);
     }
     20% {
         transform: scale(1.1);
-        background: #10b981;
+        background: var(--success-color);
     }
     100% {
         transform: scale(1);
-        background: #6b7280;
+        background: var(--secondary-color);
     }
 }
 
@@ -248,7 +195,7 @@ body {
     animation: celebrate 5s ease-out;
 }
 
-/* Modal Styles */
+/* Modal Styles - Will be moved to components/modals.css */
 .modal {
     display: none;
     position: fixed;
@@ -278,7 +225,7 @@ body {
     flex-direction: column;
     padding: 20px;
     background: transparent;
-    color: #334155;
+    color: var(--text-secondary);
     border-bottom: none;
 }
 
@@ -303,9 +250,9 @@ body {
 
 .modal-btn {
     background: white;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-secondary);
     border-radius: 6px;
-    color: #374151;
+    color: var(--text-secondary);
     width: 44px;
     height: 44px;
     cursor: pointer;
@@ -322,7 +269,7 @@ body {
 .modal-close-btn {
     background: transparent;
     border: none;
-    color: #ef4444;
+    color: var(--danger-color);
     font-size: 24px;
     width: 48px;
     height: 48px;
@@ -334,7 +281,7 @@ body {
 }
 
 .modal-btn:hover, .modal-btn:active {
-    background: #f9fafb;
+    background: var(--bg-hover);
     border-color: #9ca3af;
     transform: scale(1.05);
 }
@@ -351,7 +298,7 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
-/* Log Entries */
+/* Log entries - Will be moved to views/logs.css */
 .log-entry {
     background: white;
     border-radius: 6px;
@@ -359,7 +306,7 @@ body {
     margin-bottom: 12px;
     box-shadow: none;
     border: 1px solid #f1f5f9;
-    border-left: 3px solid #3b82f6;
+    border-left: 3px solid var(--primary-color);
 }
 
 .log-timestamp {
@@ -382,13 +329,13 @@ body {
     padding: 40px;
 }
 
-/* Toast notification */
+/* Toast notification - Will be moved to components/toast.css */
 .toast {
     position: fixed;
     bottom: calc(20px + env(safe-area-inset-bottom));
     left: 50%;
     transform: translateX(-50%);
-    background: #374151;
+    background: var(--text-secondary);
     color: white;
     padding: 12px 20px;
     border-radius: 6px;
@@ -403,12 +350,12 @@ body {
     opacity: 1;
 }
 
-/* Summary table styles */
+/* Summary table styles - Will be moved to views/logs.css */
 .summary-table {
     background: white;
     border-radius: 6px;
     overflow: hidden;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-primary);
 }
 
 .summary-table table {
@@ -421,14 +368,14 @@ body {
     padding: 16px;
     text-align: left;
     font-weight: 600;
-    color: #374151;
-    border-bottom: 1px solid #e2e8f0;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-primary);
 }
 
 .summary-table td {
     padding: 12px 16px;
     border-bottom: 1px solid #f1f5f9;
-    color: #374151;
+    color: var(--text-secondary);
 }
 
 .summary-table tr:last-child td {
@@ -437,16 +384,16 @@ body {
 
 .summary-count {
     font-weight: 600;
-    color: #3b82f6;
+    color: var(--primary-color);
 }
 
-/* PWA Install prompt */
+/* PWA Install prompt - Will be moved to utilities.css */
 .install-banner {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: #3b82f6;
+    background: var(--primary-color);
     color: white;
     padding: 16px;
     display: none;
@@ -457,7 +404,7 @@ body {
 
 .install-banner button {
     background: white;
-    color: #3b82f6;
+    color: var(--primary-color);
     border: none;
     padding: 8px 16px;
     border-radius: 4px;
@@ -465,35 +412,35 @@ body {
     cursor: pointer;
 }
 
-/* Health modal styles */
+/* Health modal styles - Will be moved to views/health.css */
 .health-textarea {
     width: 100%;
     min-height: 150px;
     padding: 16px;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
+    border: 2px solid var(--border-primary);
+    border-radius: var(--radius-md);
     font-size: 16px;
     font-family: inherit;
     resize: vertical;
     outline: none;
     background: white;
-    color: #334155;
+    color: var(--text-secondary);
     margin-bottom: 16px;
     -webkit-user-select: text;
     user-select: text;
 }
 
 .health-textarea:focus {
-    border-color: #8b5cf6;
+    border-color: var(--purple-color);
 }
 
 .btn-analyze {
     width: 100%;
-    background: #8b5cf6;
+    background: var(--purple-color);
     color: white;
     border: none;
     padding: 12px 24px;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
@@ -510,14 +457,14 @@ body {
 }
 
 .btn-analyze:disabled {
-    background: #9ca3af;
+    background: var(--text-light);
     cursor: not-allowed;
 }
 
 .analysis-result {
-    background: #f9fafb;
+    background: var(--bg-hover);
     border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 20px;
     margin-top: 20px;
 }
@@ -564,9 +511,56 @@ body {
     font-weight: 500;
 }
 
-/* Error State */
+.manual-prompt-box {
+    background: #f3f4f6;
+    border: 1px solid var(--border-secondary);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.manual-prompt-box h4 {
+    margin: 0 0 12px 0;
+    color: var(--text-secondary);
+    font-size: 16px;
+}
+
+.prompt-text {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.btn-copy {
+    background: #6366f1;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn-copy:hover {
+    background: #4f46e5;
+}
+
+/* Error message */
 .error-message {
-    background: #fee2e2;
+    background: #fef2f2;
     border: 1px solid #fecaca;
     color: #dc2626;
     padding: 12px;
@@ -575,52 +569,25 @@ body {
     font-size: 14px;
 }
 
-/* Loading screen */
+/* Loading screen - REMOVED TO ELIMINATE SPLASH SCREEN */
 .loading-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #3b82f6;
-    display: none; /* Hidden by default */
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease;
+    display: none !important; /* Force hide always */
 }
 
 .loading-screen.hidden {
-    opacity: 0;
-    pointer-events: none;
+    display: none !important;
 }
 
 .app-logo {
-    width: 80px;
-    height: 80px;
-    background: white;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    font-weight: bold;
-    color: #3b82f6;
-    margin-bottom: 20px;
+    display: none;
 }
 
 .app-logo-img {
-    width: 100px;
-    height: 100px;
-    margin-bottom: 20px;
-    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+    display: none;
 }
 
 .loading-text {
-    color: white;
-    font-size: 18px;
-    font-weight: 500;
+    display: none;
 }
 
 /* Material Symbols Outlined */

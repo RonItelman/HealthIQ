@@ -34,15 +34,25 @@ cd HealthIQ
 npm install
 ```
 
-2. Set up API key:
+2. Run the development server:
 ```bash
-cp .env.example .env
-# Edit .env and add your Anthropic API key
+npm run dev
+# Server runs on http://localhost:8000
 ```
 
-3. Run locally:
+**Note**: The local development server runs on port 8000 to avoid conflicts with other services. It includes:
+- Auto-reload on file changes
+- Mock Claude API responses for testing
+- Proper MIME types for all assets
+- Service worker support
+
+3. For production-like local testing with Vercel:
 ```bash
-npm start
+# Set up your API key in .env.local
+echo "CLAUDE_API_KEY=your-api-key-here" > .env.local
+
+# Run with Vercel CLI
+npm run dev:vercel
 ```
 
 ## Mobile Setup Guide

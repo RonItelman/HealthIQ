@@ -73,13 +73,7 @@ const EventHandler = {
     
     // Setup PWA-specific events
     setupPWAEvents() {
-        // Install button
-        const installBtn = document.getElementById('installBtn');
-        if (installBtn) {
-            installBtn.addEventListener('click', () => {
-                PWAManager.install();
-            });
-        }
+        // Install button removed
         
         // Online/offline events
         window.addEventListener('online', () => {

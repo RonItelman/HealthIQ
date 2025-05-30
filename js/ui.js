@@ -8,7 +8,7 @@ const UI = {
     init() {
         this.elements = {
             // Loading screen
-            loadingScreen: document.getElementById('loadingScreen'),
+            // loadingScreen removed
             
             // Header stats
             totalCount: document.getElementById('totalCount'),
@@ -39,9 +39,8 @@ const UI = {
     
     // Hide loading screen
     hideLoadingScreen() {
-        setTimeout(() => {
-            this.elements.loadingScreen.classList.add('hidden');
-        }, 1500);
+        // Loading screen has been removed, so just skip
+        return;
     },
     
     // Update stats

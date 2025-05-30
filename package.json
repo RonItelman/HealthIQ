@@ -3,13 +3,20 @@
   "version": "1.0.0",
   "description": "AI-powered health tracking PWA",
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "nodemon dev-server.js",
+    "dev:simple": "nodemon server.js",
+    "dev:node": "node server.js",
+    "dev:http": "npx http-server . -p 8000 -c-1 -o",
+    "dev:vercel": "vercel dev --listen 8000",
     "build": "echo 'No build required'",
     "build:gist": "node scripts/build-gist.js",
-    "start": "vercel dev"
+    "start": "node server.js"
   },
   "dependencies": {},
   "devDependencies": {
+    "dotenv": "^16.3.1",
+    "http-server": "^14.1.1",
+    "nodemon": "^3.0.1",
     "vercel": "^32.0.0"
   }
 }

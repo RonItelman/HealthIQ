@@ -14,8 +14,21 @@ const PWAManager = {
     
     // Register service worker
     registerServiceWorker() {
+        // Skip service worker in development
+        if (window.location.hostname === 'localhost') {
+            console.log('Service Worker disabled in development');
+            // Unregister any existing service worker
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                    console.log('Service Worker unregistered for development');
+                }
+            });
+            return;
+        }
+        
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
+            navigator.serviceWorker.register('./sw.js')
                 .then((registration) => {
                     console.log('Service Worker registered:', registration.scope);
                     
@@ -44,11 +57,7 @@ const PWAManager = {
             // Stash the event so it can be triggered later
             this.deferredPrompt = e;
             
-            // Show install banner
-            const banner = document.getElementById('installBanner');
-            if (banner) {
-                banner.style.display = 'flex';
-            }
+            // Install banner removed - just log availability
             
             // Log that install is available
             console.log('Install prompt available');
@@ -59,11 +68,7 @@ const PWAManager = {
             console.log('PWA was installed');
             UI.showToast('App installed successfully!');
             
-            // Hide install banner
-            const banner = document.getElementById('installBanner');
-            if (banner) {
-                banner.style.display = 'none';
-            }
+            // Install banner removed
         });
     },
     
@@ -88,11 +93,7 @@ const PWAManager = {
             // Clear the deferred prompt
             this.deferredPrompt = null;
             
-            // Hide install banner
-            const banner = document.getElementById('installBanner');
-            if (banner) {
-                banner.style.display = 'none';
-            }
+            // Install banner removed
         });
     },
     

@@ -1,15 +1,22 @@
 // Service Worker for HealthIQ PWA
 
-const CACHE_NAME = 'healthiq-v1';
+const CACHE_NAME = 'healthiq-v3';
 const urlsToCache = [
-    '/',
-    '/index.html',
-    '/css/styles.css',
-    '/js/app.js',
-    '/js/api.js',
-    '/js/storage.js',
-    '/js/ui.js',
-    '/js/health.js',
+    './',
+    './index.html',
+    './manifest.json',
+    './logo.svg',
+    './css/styles-new.css',
+    './css/base.css',
+    './css/layout.css',
+    './js/app.js',
+    './js/api.js',
+    './js/storage.js',
+    './js/ui.js',
+    './js/health.js',
+    './js/events.js',
+    './js/logs.js',
+    './js/pwa.js',
     'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined'
 ];
 

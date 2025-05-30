@@ -1,0 +1,19 @@
+{
+  "name": "HealthIQ",
+  "short_name": "HealthIQ",
+  "description": "Personal Health Logging App",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "./logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "orientation": "portrait",
+  "scope": "./"
+}
