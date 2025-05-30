@@ -25,20 +25,7 @@ A Progressive Web App (PWA) for health tracking with AI-powered analysis using C
    - Visit your Vercel URL (e.g., `https://your-app.vercel.app`)
    - Add to home screen for app-like experience
 
-### Option 2: Use via GitHub Gist (Simplest) 📱
-
-1. **Create a Gist**:
-   - Copy contents of `healthiq-gist.html`
-   - Create new Gist at [gist.github.com](https://gist.github.com)
-   - Save as `healthiq.html`
-
-2. **Access on phone**:
-   - Open the Gist
-   - Click "Raw" button
-   - Bookmark the page
-   - Configure your Vercel API endpoint when prompted
-
-### Option 3: Local Development
+### Option 2: Local Development
 
 1. Clone and install:
 ```bash
@@ -114,9 +101,6 @@ npm start
 ### Backend
 - `api/claude.js` - Vercel serverless function
 - `vercel.json` - Vercel configuration
-
-### Standalone
-- `healthiq-gist.html` - All-in-one version for GitHub Gist
 
 ## License & Usage
 

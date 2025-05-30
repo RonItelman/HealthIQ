@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="90" fill="#3b82f6" />
+  
+  <!-- Heart Icon -->
+  <path d="M100 140 C75 110, 40 100, 40 75 C40 60, 50 50, 65 50 C80 50, 90 60, 100 70 C110 60, 120 50, 135 50 C150 50, 160 60, 160 75 C160 100, 125 110, 100 140Z" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- IQ Text -->
+  <text x="100" y="170" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#ffffff" text-anchor="middle">IQ</text>
+  
+  <!-- Plus symbol for health -->
+  <rect x="95" y="85" width="10" height="30" fill="#3b82f6"/>
+  <rect x="85" y="95" width="30" height="10" fill="#3b82f6"/>
+</svg>

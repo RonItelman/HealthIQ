@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vercel dev",
     "build": "echo 'No build required'",
+    "build:gist": "node scripts/build-gist.js",
     "start": "vercel dev"
   },
   "dependencies": {},

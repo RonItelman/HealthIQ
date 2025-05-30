@@ -40,6 +40,15 @@ body {
     border-bottom: 1px solid #e2e8f0;
 }
 
+/* Action Row */
+.action-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0;
+    margin-top: -8px;
+}
+
 .header-right {
     display: flex;
     align-items: center;
@@ -98,6 +107,8 @@ body {
     transition: border-color 0.2s ease;
     -webkit-user-select: text;
     user-select: text;
+    max-height: 200px;
+    min-height: 120px;
 }
 
 .text-area:focus {
