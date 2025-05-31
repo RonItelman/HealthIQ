@@ -10,7 +10,10 @@
     "dev:vercel": "vercel dev --listen 8000",
     "build": "echo 'No build required'",
     "build:gist": "node scripts/build-gist.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "deploy": "./deploy.sh",
+    "status": "./dev.sh status",
+    "feature": "./dev.sh feature"
   },
   "dependencies": {},
   "devDependencies": {
