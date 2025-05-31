@@ -18,6 +18,7 @@
 /* Views */
 @import url('views/logs.css');
 @import url('views/health.css');
+@import url('views/think.css');
 
 /* Utilities */
 @import url('utilities/animations.css');

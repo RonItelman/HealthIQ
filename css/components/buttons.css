@@ -34,6 +34,11 @@
     width: 80vw;
 }
 
+#thinkBtn {
+    margin-left: 20px;
+    background-color: rgba(200,50,150, 0.2);
+}
+
 #analyzeHealthBtn {
     max-width: 60vw;
 }
@@ -58,6 +63,17 @@
 .btn-health.has-context {
     background: rgba(139, 92, 246, 0.1);
     border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+/* Think button */
+.btn-think {
+    background: transparent;
+    color: #222;
+}
+
+.btn-think:hover, .btn-think:active {
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 /* Button hover states */
