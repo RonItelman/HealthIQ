@@ -1,19 +1,20 @@
 // Service Worker for Dots PWA
 
-const CACHE_NAME = 'dots-v1';
+const CACHE_NAME = 'dots-v2';
 const urlsToCache = [
     './',
     './index.html',
     './manifest.json',
     './logo.svg',
     './css/styles-new.css',
-    './css/base.css',
-    './css/layout.css',
     './js/app.js',
     './js/api.js',
     './js/storage.js',
     './js/ui.js',
     './js/health.js',
+    './js/health-context.js',
+    './js/health-categorizer.js',
+    './js/log-metadata.js',
     './js/events.js',
     './js/logs.js',
     './js/pwa.js',
