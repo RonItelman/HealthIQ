@@ -28,6 +28,8 @@ const Health = {
     updateHealthDisplay() {
         if (this.healthIssues.description) {
             UI.elements.healthIssuesText.value = this.healthIssues.description;
+            // Auto-resize after setting value
+            setTimeout(() => this.autoResizeTextarea(), 10);
         }
         
         if (this.healthIssues.claudeAnalysis) {
@@ -50,6 +52,8 @@ const Health = {
         document.getElementById('healthBtn').addEventListener('click', () => {
             UI.elements.healthModal.style.display = 'block';
             document.body.style.overflow = 'hidden';
+            // Auto-resize textarea after modal opens
+            setTimeout(() => this.autoResizeTextarea(), 100);
         });
         
         // Close health modal
@@ -63,6 +67,11 @@ const Health = {
             this.analyzeHealthIssues();
         });
         
+        // Auto-resize textarea on input
+        UI.elements.healthIssuesText.addEventListener('input', () => {
+            this.autoResizeTextarea();
+        });
+        
         // Click outside modal to close
         UI.elements.healthModal.addEventListener('click', (e) => {
             if (e.target === UI.elements.healthModal) {
@@ -70,6 +79,15 @@ const Health = {
                 document.body.style.overflow = 'auto';
             }
         });
+    },
+    
+    // Auto-resize textarea to fit content
+    autoResizeTextarea() {
+        const textarea = UI.elements.healthIssuesText;
+        // Reset height to recalculate
+        textarea.style.height = 'auto';
+        // Set new height based on scrollHeight
+        textarea.style.height = textarea.scrollHeight + 'px';
     },
     
     // Analyze health issues

@@ -1,5 +1,15 @@
 /* Think View Styles */
 
+/* Think modal specific overrides */
+#thinkModal .modal-content {
+    background: white;
+}
+
+#thinkModal .modal-body {
+    background: white;
+    padding: 0;
+}
+
 .think-view {
     padding: 20px;
     height: 100%;

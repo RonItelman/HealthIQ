@@ -127,3 +127,44 @@
     /* background: #fefefe; */
     -webkit-overflow-scrolling: touch;
 }
+
+/* Mobile modal adjustments */
+@media (max-width: 768px) {
+    .modal-header {
+        padding: 12px;
+        flex-direction: row-reverse;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .modal-close-row {
+        margin-bottom: 0;
+        order: 2;
+    }
+    
+    .modal-actions {
+        order: 1;
+        margin-left: 0;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+    
+    /* Compact modal buttons on mobile */
+    .modal-btn {
+        min-width: 44px;
+        width: 44px;
+        padding: 0;
+    }
+    
+    /* Hide button text on mobile */
+    .modal-btn-text {
+        display: none;
+    }
+    
+    /* Make close button more compact */
+    .modal-close-btn {
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+    }
+}

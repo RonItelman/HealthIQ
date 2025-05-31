@@ -137,7 +137,7 @@
                     </h2>
                     <button class="btn btn-analyze" id="analyzeHealthBtn">
                         <span class="material-symbols-outlined">psychology</span>
-                        Analyze with Claude
+                        <span class="btn-text">Analyze with Claude</span>
                     </button>
                 </div>
                 
@@ -164,6 +164,23 @@
         </div>
     </div>
 
+    <!-- Think Modal -->
+    <div class="modal" id="thinkModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-close-row">
+                    <button class="modal-btn modal-close-btn" id="thinkCloseBtn" title="Close">
+                        <span class="material-symbols-outlined">close</span>
+                        <span class="icon-text">X</span>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body" id="thinkModalBody">
+                <!-- Think analysis will be inserted here -->
+            </div>
+        </div>
+    </div>
+
     <!-- Toast notification -->
     <div class="toast" id="toast"></div>
 
@@ -176,6 +193,7 @@
     <script src="js/health-categorizer.js"></script> <!-- Health categorizer -->
     <script src="js/health.js"></script>    <!-- Health features -->
     <script src="js/logs.js"></script>       <!-- Log management -->
+    <script src="js/think-modal.js"></script> <!-- Think modal -->
     <script src="js/pwa.js"></script>       <!-- PWA features -->
     <script src="js/events.js"></script>    <!-- Event handling -->
     <script src="js/app.js"></script>       <!-- Main coordinator -->

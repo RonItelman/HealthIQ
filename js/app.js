@@ -19,10 +19,13 @@ const App = {
             // 4. Setup all event handlers
             EventHandler.init();
             
-            // 5. Initialize PWA features
+            // 5. Initialize Think modal
+            ThinkModal.init();
+            
+            // 6. Initialize PWA features
             PWAManager.init();
             
-            // 6. Hide loading screen
+            // 7. Hide loading screen
             UI.hideLoadingScreen();
             
             console.log('Dots initialized successfully');

@@ -32,10 +32,6 @@ const EventHandler = {
         // Close modal
         document.getElementById('closeBtn').addEventListener('click', () => {
             LogManager.closeLogModal();
-            // Clear Think context if it exists
-            if (this.thinkContext) {
-                this.clearThinkContext();
-            }
         });
         
         // Copy as markdown
@@ -187,34 +183,18 @@ const EventHandler = {
         // Get categorized data for analysis
         const categorizedData = window.HealthCategorizer.exportForAnalysis();
         
-        // Show in modal
-        UI.elements.logModal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        
-        // Display loading state
-        UI.renderThinkView({ loading: true });
+        // Show loading state in Think modal
+        ThinkModal.showLoading();
         
         try {
             // Send to Claude for analysis
             const analysis = await this.getThinkAnalysis(categorizedData);
             
-            // Initialize context with the analysis
-            this.thinkContext = [
-                { role: 'system', content: `You are analyzing categorized health log data. The user has ${categorizedData.totalEntries} entries across ${categorizedData.totalCategories} health context categories.` },
-                { role: 'assistant', content: analysis }
-            ];
-            
             // Display the analysis
-            UI.renderThinkView({ 
-                analysis: analysis,
-                categorizedData: categorizedData
-            });
+            ThinkModal.showAnalysis(analysis, categorizedData);
         } catch (error) {
             console.error('Think analysis error:', error);
-            UI.renderThinkView({ 
-                error: 'Failed to analyze data. Please try again.',
-                categorizedData: categorizedData
-            });
+            ThinkModal.showError('Failed to analyze data. Please try again.');
         }
     },
     
@@ -242,58 +222,7 @@ Focus on actionable insights and patterns that could help the user better unders
         return await API.callClaude(prompt);
     },
     
-    // Handle Think dialog input
-    async handleThinkQuestion(question) {
-        if (!question.trim()) return;
-        
-        // Add user question to context
-        this.thinkContext.push({ role: 'user', content: question });
-        
-        // Show loading state
-        UI.updateThinkDialog({ loading: true });
-        
-        try {
-            // Build context for Claude
-            const contextMessages = this.thinkContext.map(msg => 
-                `${msg.role}: ${msg.content}`
-            ).join('\n\n');
-            
-            const prompt = `${contextMessages}\n\nuser: ${question}\n\nProvide a helpful response based on the health data analysis and previous discussion.`;
-            
-            const response = await API.callClaude(prompt);
-            
-            // Add response to context
-            this.thinkContext.push({ role: 'assistant', content: response });
-            
-            // Update UI with new response
-            UI.updateThinkDialog({ 
-                messages: this.thinkContext,
-                loading: false 
-            });
-        } catch (error) {
-            console.error('Think question error:', error);
-            UI.updateThinkDialog({ 
-                error: 'Failed to get response. Please try again.',
-                loading: false 
-            });
-        }
-    },
     
-    // Clear Think context when closing
-    clearThinkContext() {
-        this.thinkContext = [];
-    },
-    
-    // Copy Think data to clipboard
-    copyThinkData() {
-        const entries = LogManager.getEntries();
-        if (window.HealthCategorizer.needsRecategorization(entries)) {
-            window.HealthCategorizer.categorizeEntries(entries);
-        }
-        const categorizedData = window.HealthCategorizer.exportForAnalysis();
-        const jsonData = JSON.stringify(categorizedData, null, 2);
-        this.copyToClipboard(jsonData, 'Categorized data copied!');
-    }
 };
 
 // Export for use in other modules

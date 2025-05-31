@@ -247,4 +247,24 @@
     .action-row {
         gap: 8px;
     }
+    
+    /* Analyze button - icon only on mobile */
+    #analyzeHealthBtn {
+        min-width: 44px;
+        padding: 10px;
+    }
+    
+    #analyzeHealthBtn .btn-text {
+        display: none;
+    }
+    
+    /* Adjust health header row for mobile */
+    .health-header-row {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .health-header-row h2 {
+        font-size: 18px;
+    }
 }

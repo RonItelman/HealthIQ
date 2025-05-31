@@ -30,7 +30,7 @@
 /* Health textarea */
 .health-textarea {
     width: 100%;
-    min-height: 50vh;
+    min-height: 100px;
     padding: 16px;
     border: 2px solid var(--border-primary);
     border-radius: var(--radius-md);
@@ -42,10 +42,20 @@
     color: var(--text-secondary);
     -webkit-user-select: text;
     user-select: text;
+    overflow-y: hidden;
+    line-height: 1.5;
 }
 
 .health-textarea:focus {
     border-color: var(--purple-color);
+}
+
+/* Auto-resize health textarea */
+#healthIssuesText {
+    display: block;
+    overflow-y: hidden;
+    min-height: 100px;
+    height: auto;
 }
 
 /* Prompt text box */
