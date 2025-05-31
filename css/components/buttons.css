@@ -209,3 +209,42 @@
     display: block;
     width: 100%;
 }
+
+/* Mobile-specific button styles */
+@media (max-width: 768px) {
+    /* Hide text labels on header buttons, keep only icons */
+    .btn-header {
+        padding: 8px 12px;
+        gap: 0;
+        min-width: 44px;
+    }
+    
+    /* Hide button text labels on mobile */
+    .btn-header .btn-text {
+        display: none;
+    }
+    
+    /* Hide view button stats on mobile */
+    #viewBtn .btn-stats {
+        display: none;
+    }
+    
+    /* Hide icon-text fallback on mobile */
+    .btn-header .icon-text {
+        display: none;
+    }
+    
+    /* Adjust margins for mobile */
+    .btn-health {
+        margin-right: 8px;
+    }
+    
+    #thinkBtn {
+        margin-left: 8px;
+    }
+    
+    /* Make buttons more compact on mobile */
+    .action-row {
+        gap: 8px;
+    }
+}
