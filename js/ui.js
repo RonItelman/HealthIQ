@@ -66,36 +66,97 @@ const UI = {
     },
     
     // Render log entries
-    renderLogEntries(entries, healthIssues) {
+    renderLogEntries(entries) {
         if (entries.length === 0) {
             this.elements.modalBody.innerHTML = '<div class="empty-state">No entries yet. Start logging your daily activities!</div>';
             return;
         }
         
         const html = entries.map(entry => {
-            const hasAnalysis = entry.analysis && entry.analysis.claudeAnalysis;
-            const metaTags = entry.analysis?.tags || this.extractMetaTags(entry.content);
+            // Handle both new and legacy entry formats
+            const healthContext = entry.claudeHealthContext || entry.healthContext || null;
+            const userContent = entry.userLogEntry || entry.content || entry.userEntry?.content || '';
+            const claudeMessage = entry.claudeLogMessage !== undefined ? entry.claudeLogMessage : (entry.analysis?.response || entry.analysis?.claudeAnalysis || null);
+            const metaTags = entry.claudeTags || entry.analysis?.tags || [];
+            
+            // Check if we should show analysis section
+            const hasHealthContext = window.HealthContext && window.HealthContext.hasContext();
+            const shouldShowAnalysis = hasHealthContext && userContent; // Only show if there's content to analyze
             
             return `
                 <div class="log-entry">
-                    <div class="log-timestamp">${this.formatDate(entry.timestamp)}</div>
-                    <div class="log-content">${this.escapeHtml(entry.content)}</div>
-                    ${hasAnalysis ? `
-                        <div class="log-entry-analysis">
-                            <strong>Claude's Analysis:</strong><br>
-                            ${this.escapeHtml(entry.analysis.claudeAnalysis).replace(/\n/g, '<br>')}
+                    <!-- Header with timestamp and tags -->
+                    <div class="log-entry-header">
+                        <div class="log-timestamp">${this.formatDate(entry.timestamp)}</div>
+                        ${metaTags.length > 0 ? `
+                            <div class="log-entry-tags">
+                                ${metaTags.map(tag => `<span class="log-tag">${this.escapeHtml(tag)}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="log-entry-body">
+                        <!-- Section 1: User Entry -->
+                        <div class="log-section">
+                            <div class="log-section-title">
+                                <span class="material-symbols-outlined">edit_note</span>
+                                Your Entry
+                            </div>
+                            <div class="log-user-content">
+                                ${this.escapeHtml(userContent)}
+                            </div>
                         </div>
-                    ` : ''}
-                    ${healthIssues.claudeAnalysis && !hasAnalysis ? `
-                        <div class="log-entry-health">
-                            <em>Health Context: ${this.escapeHtml(healthIssues.description.substring(0, 100))}...</em>
-                        </div>
-                    ` : ''}
-                    ${metaTags.length > 0 ? `
-                        <div class="meta-tags">
-                            ${metaTags.map(tag => `<span class="meta-tag">${tag}</span>`).join('')}
-                        </div>
-                    ` : ''}
+                        
+                        <!-- Section 2: Health Context -->
+                        ${healthContext ? `
+                            <div class="log-section log-health-context">
+                                <div class="log-section-title">
+                                    <span class="material-symbols-outlined">medical_information</span>
+                                    Health Context
+                                </div>
+                                ${(healthContext.conditions && healthContext.conditions.length > 0) ? `
+                                    <div class="log-health-conditions">
+                                        Tracking: ${healthContext.conditions.join(', ')}
+                                    </div>
+                                ` : ''}
+                                <div class="log-health-summary">
+                                    ${this.escapeHtml((healthContext.fullResponse || healthContext.summary || healthContext.description || '').substring(0, 150))}...
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <!-- Section 3: Claude's Analysis -->
+                        ${shouldShowAnalysis ? `
+                            <div class="log-section log-analysis">
+                                <div class="log-section-title">
+                                    <span class="material-symbols-outlined">psychology</span>
+                                    AI Analysis
+                                </div>
+                                <div class="log-analysis-content">
+                                    ${claudeMessage ? 
+                                        String(claudeMessage).replace(/\n/g, '<br>') :
+                                        '<div class="analysis-processing">Processing... AI analysis will appear here</div>'
+                                    }
+                                </div>
+                                ${entry.claudeQuestions && entry.claudeQuestions.length > 0 ? `
+                                    <div class="log-analysis-questions">
+                                        <strong>Follow-up Questions:</strong>
+                                        <ul>
+                                            ${entry.claudeQuestions.map(q => `<li>${q}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                ` : ''}
+                                ${entry.claudeObservations && entry.claudeObservations.length > 0 ? `
+                                    <div class="log-analysis-observations">
+                                        <strong>Observations:</strong>
+                                        <ul>
+                                            ${entry.claudeObservations.map(o => `<li>${o}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
                 </div>
             `;
         }).join('');
@@ -136,6 +197,20 @@ const UI = {
             hourlyGroups[hour].push(entry);
         });
         
+        // Calculate tag histogram
+        const tagCounts = {};
+        todayEntries.forEach(entry => {
+            const content = entry.userLogEntry || entry.content || entry.userEntry?.content || '';
+            const tags = entry.claudeTags || entry.analysis?.tags || (content ? this.extractMetaTags(content) : []);
+            tags.forEach(tag => {
+                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+            });
+        });
+        
+        // Sort tags by count (descending)
+        const sortedTags = Object.entries(tagCounts)
+            .sort(([, a], [, b]) => b - a);
+        
         const summaryHtml = `
             <div class="summary-table">
                 <table>
@@ -159,6 +234,29 @@ const UI = {
                     </tbody>
                 </table>
             </div>
+            
+            ${sortedTags.length > 0 ? `
+                <div class="summary-table" style="margin-top: 20px;">
+                    <h3>Tags Histogram</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tag</th>
+                                <th>Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${sortedTags.map(([tag, count]) => `
+                                <tr>
+                                    <td>${this.escapeHtml(tag)}</td>
+                                    <td class="summary-count">${count}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            ` : ''}
+            
             <div class="log-entry" style="margin-top: 20px;">
                 <strong>Today's Summary:</strong><br>
                 Total entries: ${todayEntries.length}<br>
@@ -196,26 +294,95 @@ const UI = {
         return div.innerHTML;
     },
     
-    // Generate markdown
+    // Generate markdown - Direct JSON to human-readable conversion
     generateMarkdown(entries) {
         if (!entries || entries.length === 0) return 'No entries to export';
         
-        let markdown = '# My HealthIQ Log Entries\n\n';
+        let markdown = '# Dots Health Log Data\n\n';
         
         entries.forEach((entry, index) => {
-            const date = new Date(entry.timestamp);
-            const formattedDate = date.toLocaleString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
+            markdown += `## Entry ${index + 1}\n\n`;
             
-            markdown += `## Entry ${entries.length - index}\n`;
-            markdown += `**Date:** ${formattedDate}\n\n`;
-            markdown += `${entry.content}\n\n`;
+            // Basic info
+            markdown += `**ID:** ${entry.id}\n`;
+            markdown += `**Timestamp:** ${entry.timestamp}\n`;
+            markdown += `**Version:** ${entry.version}\n\n`;
+            
+            // User log entry
+            markdown += `### User Log Entry\n`;
+            markdown += `${entry.userLogEntry || '(empty)'}\n\n`;
+            
+            // Claude Health Context
+            if (entry.claudeHealthContext) {
+                markdown += `### Health Context\n`;
+                markdown += `**Captured At:** ${entry.claudeHealthContext.capturedAt}\n\n`;
+                
+                if (entry.claudeHealthContext.conditions && entry.claudeHealthContext.conditions.length > 0) {
+                    markdown += `**Conditions:**\n`;
+                    entry.claudeHealthContext.conditions.forEach(condition => {
+                        markdown += `- ${condition}\n`;
+                    });
+                    markdown += '\n';
+                }
+                
+                if (entry.claudeHealthContext.triggers && entry.claudeHealthContext.triggers.length > 0) {
+                    markdown += `**Triggers:**\n`;
+                    entry.claudeHealthContext.triggers.forEach(trigger => {
+                        markdown += `- ${trigger}\n`;
+                    });
+                    markdown += '\n';
+                }
+                
+                if (entry.claudeHealthContext.trackingGoals && entry.claudeHealthContext.trackingGoals.length > 0) {
+                    markdown += `**Tracking Goals:**\n`;
+                    entry.claudeHealthContext.trackingGoals.forEach(goal => {
+                        markdown += `- ${goal}\n`;
+                    });
+                    markdown += '\n';
+                }
+                
+                markdown += `**Full Response:**\n${entry.claudeHealthContext.fullResponse}\n\n`;
+            }
+            
+            // Claude's Analysis
+            markdown += `### Claude's Analysis\n`;
+            markdown += `**Message:** ${entry.claudeLogMessage || '(pending)'}\n\n`;
+            
+            if (entry.claudeTags && entry.claudeTags.length > 0) {
+                markdown += `**Tags:** ${entry.claudeTags.join(', ')}\n\n`;
+            }
+            
+            if (entry.claudeObservations && entry.claudeObservations.length > 0) {
+                markdown += `**Observations:**\n`;
+                entry.claudeObservations.forEach(obs => {
+                    markdown += `- ${obs}\n`;
+                });
+                markdown += '\n';
+            }
+            
+            if (entry.claudeQuestions && entry.claudeQuestions.length > 0) {
+                markdown += `**Questions:**\n`;
+                entry.claudeQuestions.forEach(q => {
+                    markdown += `- ${q}\n`;
+                });
+                markdown += '\n';
+            }
+            
+            if (entry.claudePotentialPathways && entry.claudePotentialPathways.length > 0) {
+                markdown += `**Potential Pathways:**\n`;
+                entry.claudePotentialPathways.forEach(pathway => {
+                    markdown += `- ${pathway}\n`;
+                });
+                markdown += '\n';
+            }
+            
+            // Analysis Metadata
+            if (entry.analysisMetadata) {
+                markdown += `### Analysis Metadata\n`;
+                markdown += `**Analyzed At:** ${entry.analysisMetadata.analyzedAt || 'N/A'}\n`;
+                markdown += `**Model Used:** ${entry.analysisMetadata.modelUsed}\n\n`;
+            }
+            
             markdown += '---\n\n';
         });
         
@@ -255,7 +422,8 @@ const UI = {
     summarizeEntries(entries) {
         const keywords = [];
         entries.forEach(entry => {
-            const words = entry.content.toLowerCase().split(/\s+/);
+            const content = entry.userLogEntry || entry.content || entry.userEntry?.content || '';
+            const words = content.toLowerCase().split(/\s+/);
             const importantWords = words.filter(word => 
                 word.length > 4 && !['about', 'after', 'before', 'today', 'really'].includes(word)
             );
@@ -273,7 +441,7 @@ const UI = {
         
         setTimeout(() => {
             this.elements.viewBtn.classList.remove('celebrating');
-            this.elements.viewBtnIcon.textContent = 'visibility';
+            this.elements.viewBtnIcon.textContent = 'auto_stories';
         }, 5000);
     }
 };

@@ -141,7 +141,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🚀 HealthIQ development server running at http://localhost:${PORT}`);
+  console.log(`🚀 Dots development server running at http://localhost:${PORT}`);
   if (CLAUDE_API_KEY) {
     console.log('✅ Claude API key detected - Real API calls enabled');
   } else {

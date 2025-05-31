@@ -6,10 +6,10 @@
     <meta name="theme-color" content="#3b82f6">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="HealthIQ">
+    <meta name="apple-mobile-web-app-title" content="Dots">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="description" content="AI-powered health tracking app">
-    <title>HealthIQ - AI Health Tracking</title>
+    <title>Dots - Connecting Your Health Patterns</title>
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -32,8 +32,8 @@
     <div class="container">
         <div class="header">
             <div class="header-left">
-                <img src="logo.svg" alt="HealthIQ Logo" class="header-logo">
-                <div class="app-name">HealthIQ</div>
+                <img src="logo.svg" alt="Dots Logo" class="header-logo">
+                <div class="app-name">Dots</div>
             </div>
         </div>
         
@@ -44,7 +44,7 @@
                 Health Issues
             </button>
             <button class="btn btn-view btn-header" id="viewBtn">
-                <span class="material-symbols-outlined" id="viewBtnIcon">visibility</span>
+                <span class="material-symbols-outlined" id="viewBtnIcon">auto_stories</span>
                 <span class="icon-text">></span>
                 <div class="btn-stats">
                     <div class="btn-stat">
@@ -59,20 +59,22 @@
                 </div>
             </button>
         </div>
-        
-        <textarea 
-            class="text-area" 
-            placeholder="What happened today? Share your thoughts..."
-            id="logText"
-        ></textarea>
-        
-        <div class="button-container">
-            <button class="btn btn-log" id="logBtn">
-                <span class="material-symbols-outlined">add</span>
-                <span class="icon-text">+</span>
-                Log
-            </button>
+        <div id="log-input-container">
+            <textarea 
+                class="text-area" 
+                placeholder="What happened today? Share your thoughts..."
+                id="logText"
+            ></textarea>
+            <div class="button-container">
+                <button class="btn btn-log" id="logBtn">
+                    <span class="material-symbols-outlined">add</span>
+                    <span class="icon-text">+</span>
+                    Log
+                </button>
+            </div>
+
         </div>
+        
     </div>
 
     <!-- Log Modal -->
@@ -86,25 +88,21 @@
                     </button>
                 </div>
                 <div class="modal-actions">
-                    <button class="modal-btn" id="codeBtn" title="Copy JSON Schema">
-                        <span class="material-symbols-outlined">code</span>
-                        <span class="icon-text">{}</span>
+                    <button class="modal-btn" id="summaryBtn" title="Daily Analysis">
+                        <span class="material-symbols-outlined">analytics</span>
+                        <span class="modal-btn-text">Analysis</span>
                     </button>
-                    <button class="modal-btn" id="emailBtn" title="Email Log">
-                        <span class="material-symbols-outlined">mail</span>
-                        <span class="icon-text">@</span>
+                    <button class="modal-btn" id="dataBtn" title="Copy JSON Data">
+                        <span class="material-symbols-outlined">code</span>
+                        <span class="modal-btn-text">Data</span>
                     </button>
                     <button class="modal-btn" id="copyBtn" title="Copy as Markdown">
                         <span class="material-symbols-outlined">content_copy</span>
-                        <span class="icon-text">C</span>
+                        <span class="modal-btn-text">Copy</span>
                     </button>
-                    <button class="modal-btn" id="viewMarkdownBtn" title="View as Markdown">
-                        <span class="material-symbols-outlined">description</span>
-                        <span class="icon-text">Σ</span>
-                    </button>
-                    <button class="modal-btn" id="summaryBtn" title="Daily Summary">
-                        <span class="material-symbols-outlined">analytics</span>
-                        <span class="icon-text">☯</span>
+                    <button class="modal-btn clear-btn" id="clearLogsBtn" title="Clear All Logs">
+                        <span class="material-symbols-outlined">delete_sweep</span>
+                        <span class="modal-btn-text">Clear</span>
                     </button>
                 </div>
             </div>
@@ -125,23 +123,37 @@
                     </button>
                 </div>
             </div>
-            <div class="modal-body" style="padding: 20px;">
-                <h2 class="modal-title" style="margin-bottom: 20px;">
-                    <span class="material-symbols-outlined" style="margin-right: 8px;">medical_information</span>
-                    Health Issues Description
-                </h2>
-                <textarea 
-                    id="healthIssuesText"
-                    class="health-textarea"
-                    placeholder="Describe your health issues here..."
-                ></textarea>
-                <button class="btn btn-analyze" id="analyzeHealthBtn">
-                    <span class="material-symbols-outlined">psychology</span>
-                    Analyze with Claude
-                </button>
-                <div id="healthAnalysisResult" class="analysis-result" style="display: none;">
-                    <h3 style="margin-bottom: 12px; color: #374151;">Claude's Analysis</h3>
-                    <div id="healthAnalysisContent"></div>
+            <div class="modal-body health-modal-body">
+                <!-- Header with title and analyze button -->
+                <div class="health-header-row">
+                    <h2 class="modal-title">
+                        <span class="material-symbols-outlined">medical_information</span>
+                        Health Issues Description
+                    </h2>
+                    <button class="btn btn-analyze" id="analyzeHealthBtn">
+                        <span class="material-symbols-outlined">psychology</span>
+                        Analyze with Claude
+                    </button>
+                </div>
+                
+                <!-- User Input Section -->
+                <div class="health-section">
+                    <h3 class="section-title">Describe Your Issues and Goals</h3>
+                    <textarea 
+                        id="healthIssuesText"
+                        class="health-textarea"
+                        placeholder="Describe your health conditions, observations, triggers, and tracking goals..."
+                    ></textarea>
+                </div>
+                
+                <!-- Claude's Response Section -->
+                <div class="health-section">
+                    <h3 class="section-title">Your Connecting the Dots AI Assistant's Understanding</h3>
+                    <div id="healthAnalysisResult" class="analysis-result">
+                        <div id="healthAnalysisContent" class="analysis-content">
+                            <p class="analysis-placeholder">Submit your issue for Claude to gain context</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -154,6 +166,8 @@
     <script src="js/storage.js"></script>    <!-- Storage utilities -->
     <script src="js/api.js"></script>        <!-- API integration -->
     <script src="js/ui.js"></script>         <!-- UI rendering -->
+    <script src="js/health-context.js"></script> <!-- Health context manager -->
+    <script src="js/log-metadata.js"></script>   <!-- Log metadata manager -->
     <script src="js/health.js"></script>    <!-- Health features -->
     <script src="js/logs.js"></script>       <!-- Log management -->
     <script src="js/pwa.js"></script>       <!-- PWA features -->

@@ -13,7 +13,21 @@ const LogManager = {
     
     // Load entries from storage
     loadEntries() {
-        this.logEntries = Storage.loadLogEntries();
+        const entries = Storage.loadLogEntries();
+        
+        // Migrate old entries to new format if needed
+        this.logEntries = entries.map(entry => {
+            // Check if entry needs migration
+            if (window.LogMetadata && window.LogMetadata.needsMigration(entry)) {
+                return window.LogMetadata.migrateOldEntry(entry);
+            }
+            return entry;
+        });
+        
+        // Save migrated entries back
+        if (entries.length > 0 && this.logEntries.some((e, i) => e !== entries[i])) {
+            this.saveEntries();
+        }
     },
     
     // Save entries to storage
@@ -35,12 +49,15 @@ const LogManager = {
             return;
         }
         
-        const entry = {
-            id: Date.now(),
-            timestamp: new Date().toISOString(),
-            content: content,
-            analysis: null
-        };
+        // Create enriched entry with metadata
+        const entry = window.LogMetadata ? 
+            window.LogMetadata.createEnrichedLogEntry(content) :
+            {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                content: content,
+                analysis: null
+            };
         
         // Add to beginning of array
         this.logEntries.unshift(entry);
@@ -57,8 +74,8 @@ const LogManager = {
         // Show success
         UI.showToast('Entry logged successfully!');
         
-        // Analyze if health issues are set and online
-        if (Health.healthIssues.claudeAnalysis && !PWAManager.isOffline) {
+        // Analyze if health context is set and online
+        if (window.HealthContext && window.HealthContext.hasContext() && !PWAManager.isOffline) {
             this.analyzeEntryInBackground(entry);
         }
     },
@@ -68,11 +85,26 @@ const LogManager = {
         try {
             const analysis = await Health.analyzeLogEntry(entry);
             if (analysis) {
-                // Update the entry
+                // Update the entry with analysis
                 const entryIndex = this.logEntries.findIndex(e => e.id === entry.id);
                 if (entryIndex !== -1) {
-                    this.logEntries[entryIndex].analysis = analysis;
+                    // Update using metadata manager if available
+                    if (window.LogMetadata) {
+                        const prompt = API.createLogEntryPrompt(entry);
+                        window.LogMetadata.updateWithAnalysis(
+                            this.logEntries[entryIndex], 
+                            analysis.claudeAnalysis,
+                            prompt
+                        );
+                    } else {
+                        this.logEntries[entryIndex].analysis = analysis;
+                    }
                     this.saveEntries();
+                    
+                    // Update UI if modal is open
+                    if (UI.elements.logModal.style.display === 'block') {
+                        this.renderCurrentView();
+                    }
                 }
             }
         } catch (error) {
@@ -147,7 +179,7 @@ const LogManager = {
                 UI.renderSummary(this.logEntries);
                 break;
             default:
-                UI.renderLogEntries(this.logEntries, Health.healthIssues);
+                UI.renderLogEntries(this.logEntries);
         }
     },
     
@@ -172,6 +204,14 @@ const LogManager = {
             entry.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
             (entry.analysis && entry.analysis.claudeAnalysis.toLowerCase().includes(searchTerm.toLowerCase()))
         );
+    },
+    
+    // Clear all log entries
+    clearAllEntries() {
+        this.logEntries = [];
+        this.saveEntries();
+        this.updateStats();
+        this.renderCurrentView();
     }
 };
 

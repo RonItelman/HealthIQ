@@ -1,0 +1,143 @@
+/* Typography Base Styles */
+
+/* Font family */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: var(--text-base);
+    font-weight: var(--font-normal);
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: var(--font-semibold);
+    line-height: 1.2;
+    color: var(--text-primary);
+}
+
+h1 {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-lg);
+}
+
+h2 {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-md);
+}
+
+h3 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-sm);
+}
+
+h4 {
+    font-size: var(--text-base);
+    margin-bottom: var(--space-sm);
+}
+
+h5 {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-xs);
+}
+
+h6 {
+    font-size: var(--text-xs);
+    margin-bottom: var(--space-xs);
+}
+
+/* Paragraphs */
+p {
+    margin-bottom: var(--space-md);
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+/* Links */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+    margin-bottom: var(--space-md);
+    padding-left: var(--space-lg);
+}
+
+ul {
+    list-style-type: disc;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+li {
+    margin-bottom: var(--space-xs);
+}
+
+/* Strong and emphasis */
+strong, b {
+    font-weight: var(--font-semibold);
+}
+
+em, i {
+    font-style: italic;
+}
+
+/* Code and pre */
+code {
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    font-size: 0.875em;
+    background-color: var(--bg-tertiary);
+    padding: 2px 4px;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+}
+
+pre {
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    font-size: var(--text-sm);
+    background-color: var(--bg-tertiary);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin-bottom: var(--space-md);
+}
+
+pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+/* Blockquote */
+blockquote {
+    border-left: 4px solid var(--border-primary);
+    padding-left: var(--space-md);
+    margin-bottom: var(--space-md);
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+/* Small text */
+small {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+}
+
+/* Horizontal rule */
+hr {
+    border: 0;
+    height: 1px;
+    background-color: var(--border-primary);
+    margin: var(--space-lg) 0;
+}

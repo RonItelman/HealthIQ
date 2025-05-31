@@ -33,7 +33,14 @@ const Health = {
         if (this.healthIssues.claudeAnalysis) {
             UI.elements.healthAnalysisContent.innerHTML = 
                 this.healthIssues.claudeAnalysis.replace(/\n/g, '<br>');
-            UI.elements.healthAnalysisResult.style.display = 'block';
+        } else {
+            UI.elements.healthAnalysisContent.innerHTML = 
+                '<p class="analysis-placeholder">Submit your issue for Claude to gain context</p>';
+        }
+        
+        // Update button to show context is active
+        if (window.HealthContext && window.HealthContext.hasContext()) {
+            document.getElementById('healthBtn').classList.add('has-context');
         }
     },
     
@@ -67,6 +74,7 @@ const Health = {
     
     // Analyze health issues
     async analyzeHealthIssues() {
+        console.log('Analyze button clicked');
         const description = UI.elements.healthIssuesText.value.trim();
         
         if (!description) {
@@ -74,37 +82,48 @@ const Health = {
             return;
         }
         
+        console.log('Description:', description);
+        
         // Update button state
         UI.elements.analyzeHealthBtn.disabled = true;
         UI.elements.analyzeHealthBtn.innerHTML = 
             '<span class="material-symbols-outlined">hourglass_empty</span> Analyzing...';
         
         try {
+            console.log('Creating prompt...');
             const prompt = API.createHealthIssuesPrompt(description);
+            console.log('Prompt created:', prompt);
+            
+            console.log('Calling Claude API...');
             const analysis = await API.callClaude(prompt);
+            console.log('Analysis received:', analysis);
             
             // Save the analysis
             this.healthIssues.description = description;
             this.healthIssues.claudeAnalysis = analysis;
             this.saveHealthIssues();
             
+            // Update health context
+            window.HealthContext.updateFromAnalysis(description, analysis);
+            
             // Update display
             UI.elements.healthAnalysisContent.innerHTML = analysis.replace(/\n/g, '<br>');
-            UI.elements.healthAnalysisResult.style.display = 'block';
             
             UI.showToast('Health analysis completed');
             
         } catch (error) {
             console.error('Health analysis error:', error);
             
-            // Show error message
-            const errorMessage = UI.showError(
-                'Unable to analyze health issues. Please check your internet connection and try again.'
-            );
+            // Show error message with more details
+            const errorMessage = `
+                <div class="error-message">
+                    <strong>Unable to analyze health issues</strong><br>
+                    ${error.message || 'Please check your internet connection and try again.'}
+                </div>
+            `;
             UI.elements.healthAnalysisContent.innerHTML = errorMessage;
-            UI.elements.healthAnalysisResult.style.display = 'block';
             
-            UI.showToast('Analysis failed - please try again');
+            UI.showToast('Analysis failed - check console for details');
         } finally {
             // Reset button
             UI.elements.analyzeHealthBtn.disabled = false;
@@ -115,16 +134,14 @@ const Health = {
     
     // Analyze log entry in context of health issues
     async analyzeLogEntry(logEntry) {
-        if (!this.healthIssues.claudeAnalysis) {
+        // Check if we have health context
+        if (!window.HealthContext || !window.HealthContext.hasContext()) {
             return null; // No health context to analyze against
         }
         
         try {
-            const prompt = API.createLogEntryPrompt(
-                logEntry, 
-                this.healthIssues.description, 
-                this.healthIssues.claudeAnalysis
-            );
+            // Create prompt with health context automatically included
+            const prompt = API.createLogEntryPrompt(logEntry);
             
             const analysis = await API.callClaude(prompt);
             

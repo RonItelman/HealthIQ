@@ -1,4 +1,4 @@
-# HealthIQ
+# Dots
 
 A Progressive Web App (PWA) for health tracking with AI-powered analysis using Claude.
 

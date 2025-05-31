@@ -1,6 +1,6 @@
 {
-  "name": "HealthIQ",
-  "short_name": "HealthIQ",
+  "name": "Dots",
+  "short_name": "Dots",
   "description": "Personal Health Logging App",
   "start_url": "./index.html",
   "display": "standalone",

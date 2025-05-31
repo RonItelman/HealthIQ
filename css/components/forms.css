@@ -1,0 +1,65 @@
+/* Form Components */
+
+/* Text areas */
+.text-area {
+    flex: 1;
+    width: 100%;
+    padding: 20px;
+    border: 2px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    transition: border-color 0.2s ease;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.text-area:focus {
+    border-color: var(--primary-color);
+}
+
+.text-area::placeholder {
+    color: #666;
+    font-style: italic;
+}
+
+/* Health textarea */
+.health-textarea {
+    width: 100%;
+    min-height: 50vh;
+    padding: 16px;
+    border: 2px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    background: white;
+    color: var(--text-secondary);
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.health-textarea:focus {
+    border-color: var(--purple-color);
+}
+
+/* Prompt text box */
+.prompt-text {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+    -webkit-user-select: text;
+    user-select: text;
+}

@@ -3,8 +3,9 @@
 const Storage = {
     // Keys for localStorage
     KEYS: {
-        LOG_ENTRIES: 'healthiq_logs',
-        HEALTH_ISSUES: 'healthiq_health_issues'
+        LOG_ENTRIES: 'dots_logs',
+        HEALTH_ISSUES: 'dots_health_issues',
+        HEALTH_CONTEXT: 'dots_health_context'
     },
     
     // Save log entries
@@ -51,6 +52,50 @@ const Storage = {
         }
     },
     
+    // Save health context (comprehensive health profile)
+    saveHealthContext(context) {
+        try {
+            localStorage.setItem(this.KEYS.HEALTH_CONTEXT, JSON.stringify(context));
+            return true;
+        } catch (e) {
+            console.error('Failed to save health context:', e);
+            return false;
+        }
+    },
+    
+    // Load health context
+    loadHealthContext() {
+        try {
+            const saved = localStorage.getItem(this.KEYS.HEALTH_CONTEXT);
+            return saved ? JSON.parse(saved) : {
+                userDescription: '',
+                claudeAnalysis: '',
+                structuredData: {
+                    conditions: [],
+                    symptoms: [],
+                    triggers: [],
+                    trackingQuestions: [],
+                    suggestedTags: []
+                },
+                lastUpdated: null
+            };
+        } catch (e) {
+            console.error('Failed to load health context:', e);
+            return {
+                userDescription: '',
+                claudeAnalysis: '',
+                structuredData: {
+                    conditions: [],
+                    symptoms: [],
+                    triggers: [],
+                    trackingQuestions: [],
+                    suggestedTags: []
+                },
+                lastUpdated: null
+            };
+        }
+    },
+    
     // Export data as JSON
     exportData() {
         const data = {
@@ -63,7 +108,7 @@ const Storage = {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `healthiq-export-${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `dots-export-${new Date().toISOString().split('T')[0]}.json`;
         a.click();
         URL.revokeObjectURL(url);
     },

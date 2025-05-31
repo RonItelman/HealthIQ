@@ -3,7 +3,7 @@
 const App = {
     // Initialize the entire application
     init() {
-        console.log('HealthIQ starting...');
+        console.log('Dots starting...');
         
         // Initialize modules in correct order
         try {
@@ -25,7 +25,7 @@ const App = {
             // 6. Hide loading screen
             UI.hideLoadingScreen();
             
-            console.log('HealthIQ initialized successfully');
+            console.log('Dots initialized successfully');
             
         } catch (error) {
             console.error('Failed to initialize app:', error);

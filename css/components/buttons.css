@@ -1,0 +1,195 @@
+/* Button Components */
+
+/* Base button styles */
+.btn {
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+    gap: 6px;
+}
+
+/* Main log button */
+#logBtn {
+    border: none;
+    margin-top:30px;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    touch-action: manipulation;
+    gap: 6px;
+    width: 80vw;
+}
+
+#analyzeHealthBtn {
+    max-width: 60vw;
+}
+
+/* Button variants */
+.btn-log {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-view {
+    background: transparent;
+    color: #222;
+}
+
+.btn-health {
+    background: transparent;
+    color: #222;
+}
+
+/* Active health context indicator */
+.btn-health.has-context {
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+/* Button hover states */
+.btn:hover, .btn:active {
+    transform: scale(1.05);
+    box-shadow: none;
+}
+
+.btn-log:hover, .btn-log:active {
+    background: #2563eb;
+}
+
+.btn-view:hover, .btn-view:active {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.btn-health:hover, .btn-health:active {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Header buttons */
+.btn-header {
+    flex: 0 0 auto;
+    width: auto;
+    height: 44px;
+    padding: 8px 16px;
+    font-size: 14px;
+    gap: 8px;
+    min-width: auto;
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(50,100,255, 0.2);
+}
+
+/* Dark icons for transparent buttons */
+.btn-view .material-symbols-outlined,
+.btn-health .material-symbols-outlined {
+    color: #222;
+}
+
+/* Add spacing after health button */
+.btn-health {
+    margin-right: 20px;
+}
+
+/* Button stats display */
+.btn-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: black;
+}
+
+.btn-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+}
+
+.btn-stat-number {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.btn-stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+.btn-stat-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(50, 50, 50, 1);
+}
+
+/* Analyze button in health modal */
+.health-header-row .btn-analyze {
+    width: auto;
+    background: var(--purple-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-analyze:hover {
+    background: #7c3aed;
+}
+
+.btn-analyze:disabled {
+    background: var(--text-light);
+    cursor: not-allowed;
+}
+
+/* Copy button */
+.btn-copy {
+    background: #6366f1;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn-copy:hover {
+    background: #4f46e5;
+}
+
+/* Expand button for log sections */
+.log-expand-btn {
+    color: var(--primary-color);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 0;
+    text-align: center;
+    display: block;
+    width: 100%;
+}

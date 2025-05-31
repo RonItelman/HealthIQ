@@ -1,10 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <!-- Background Circle -->
-  <circle cx="100" cy="100" r="90" fill="#3b82f6" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <!-- 3x3 Grid of Colored Dots -->
+  <!-- Row 1 -->
+  <circle cx="20" cy="20" r="15" fill="#3b82f6" />  <!-- Blue -->
+  <circle cx="60" cy="20" r="15" fill="#10b981" />  <!-- Green -->
+  <circle cx="100" cy="20" r="15" fill="#f59e0b" /> <!-- Amber -->
   
-  <!-- Heart Icon (centered) -->
-  <path d="M100 120 C75 90, 40 80, 40 55 C40 40, 50 30, 65 30 C80 30, 90 40, 100 50 C110 40, 120 30, 135 30 C150 30, 160 40, 160 55 C160 80, 125 90, 100 120Z" fill="#ffffff" opacity="0.9" transform="translate(0, 20)"/>
+  <!-- Row 2 -->
+  <circle cx="20" cy="60" r="15" fill="#8b5cf6" />  <!-- Purple -->
+  <circle cx="60" cy="60" r="15" fill="#ef4444" />  <!-- Red -->
+  <circle cx="100" cy="60" r="15" fill="#06b6d4" /> <!-- Cyan -->
   
-  <!-- Function symbol (ƒ) -->
-  <text x="100" y="110" font-family="Arial, sans-serif" font-size="36" font-weight="normal" font-style="italic" fill="#3b82f6" text-anchor="middle">ƒ</text>
+  <!-- Row 3 -->
+  <circle cx="20" cy="100" r="15" fill="#f97316" /> <!-- Orange -->
+  <circle cx="60" cy="100" r="15" fill="#ec4899" /> <!-- Pink -->
+  <circle cx="100" cy="100" r="15" fill="#84cc16" /> <!-- Lime -->
 </svg>

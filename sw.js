@@ -1,6 +1,6 @@
-// Service Worker for HealthIQ PWA
+// Service Worker for Dots PWA
 
-const CACHE_NAME = 'healthiq-v3';
+const CACHE_NAME = 'dots-v1';
 const urlsToCache = [
     './',
     './index.html',

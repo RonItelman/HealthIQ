@@ -34,24 +34,19 @@ const EventHandler = {
             this.copyAsMarkdown();
         });
         
-        // Copy as JSON
-        document.getElementById('codeBtn').addEventListener('click', () => {
-            this.copyAsJSON();
-        });
-        
-        // Email log
-        document.getElementById('emailBtn').addEventListener('click', () => {
-            this.emailLog();
-        });
-        
-        // Toggle markdown view
-        document.getElementById('viewMarkdownBtn').addEventListener('click', () => {
-            LogManager.toggleView('markdown');
-        });
-        
-        // Toggle summary view
+        // Toggle summary view (now Analysis)
         document.getElementById('summaryBtn').addEventListener('click', () => {
             LogManager.toggleView('summary');
+        });
+        
+        // Clear logs button
+        document.getElementById('clearLogsBtn').addEventListener('click', () => {
+            this.handleClearLogs();
+        });
+        
+        // Copy JSON data button
+        document.getElementById('dataBtn').addEventListener('click', () => {
+            this.copyJSONData();
         });
     },
     
@@ -92,32 +87,20 @@ const EventHandler = {
         
         // Update button
         const btn = document.getElementById('copyBtn');
-        this.animateButton(btn, 'check', 'content_copy', 'C');
+        this.animateButton(btn, 'check', 'content_copy', 'Copy');
     },
     
-    // Copy as JSON
-    copyAsJSON() {
-        const logData = JSON.stringify(LogManager.getEntries(), null, 2);
-        this.copyToClipboard(logData, 'JSON copied!');
+    // Copy JSON data
+    copyJSONData() {
+        const entries = LogManager.getEntries();
+        const jsonData = JSON.stringify(entries, null, 2);
+        this.copyToClipboard(jsonData, 'JSON data copied!');
         
         // Update button
-        const btn = document.getElementById('codeBtn');
-        this.animateButton(btn, 'check', 'code', '{}');
+        const btn = document.getElementById('dataBtn');
+        this.animateButton(btn, 'check', 'code', 'Data');
     },
     
-    // Email log
-    emailLog() {
-        const markdown = UI.generateMarkdown(LogManager.getEntries());
-        const subject = encodeURIComponent('My HealthIQ Log Entries');
-        const body = encodeURIComponent(`Here are my HealthIQ log entries:\n\n${markdown}`);
-        const mailtoUrl = `mailto:?subject=${subject}&body=${body}`;
-        
-        window.location.href = mailtoUrl;
-        
-        // Update button
-        const btn = document.getElementById('emailBtn');
-        this.animateButton(btn, 'check', 'mail', '@');
-    },
     
     // Copy to clipboard utility
     copyToClipboard(text, successMessage) {
@@ -146,12 +129,35 @@ const EventHandler = {
     },
     
     // Animate button after action
-    animateButton(btn, tempIcon, originalIcon, iconText) {
-        btn.innerHTML = `<span class="material-symbols-outlined">${tempIcon}</span><span class="icon-text">✓</span>`;
+    animateButton(btn, tempIcon, originalIcon, buttonText) {
+        const iconElement = btn.querySelector('.material-symbols-outlined');
+        const originalIconText = iconElement.textContent;
+        iconElement.textContent = tempIcon;
         
         setTimeout(() => {
-            btn.innerHTML = `<span class="material-symbols-outlined">${originalIcon}</span><span class="icon-text">${iconText}</span>`;
+            iconElement.textContent = originalIconText;
         }, 2000);
+    },
+    
+    // Handle clear logs with confirmation
+    handleClearLogs() {
+        const totalEntries = LogManager.getEntries().length;
+        
+        if (totalEntries === 0) {
+            UI.showToast('No logs to clear');
+            return;
+        }
+        
+        const confirmMessage = `Are you sure you want to permanently delete all ${totalEntries} log entries? This action cannot be undone.`;
+        
+        if (confirm(confirmMessage)) {
+            LogManager.clearAllEntries();
+            UI.showToast('All logs cleared successfully');
+            
+            // Animate button
+            const btn = document.getElementById('clearLogsBtn');
+            this.animateButton(btn, 'check', 'delete_sweep', 'Clear');
+        }
     }
 };
 

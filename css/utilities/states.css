@@ -1,0 +1,150 @@
+/* State Classes */
+
+/* Loading states */
+.is-loading {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.is-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Active states */
+.is-active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Error states */
+.has-error {
+    border-color: #ef4444 !important;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* Success states */
+.has-success {
+    border-color: #10b981 !important;
+}
+
+.success-message {
+    color: #10b981;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* Disabled states */
+.is-disabled,
+[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Focus states */
+.focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Hover states */
+@media (hover: hover) {
+    .hover\:opacity-80:hover {
+        opacity: 0.8;
+    }
+    
+    .hover\:scale-105:hover {
+        transform: scale(1.05);
+    }
+    
+    .hover\:bg-gray:hover {
+        background-color: var(--bg-secondary);
+    }
+}
+
+/* Visibility states */
+.visible {
+    visibility: visible;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+/* Opacity states */
+.opacity-0 {
+    opacity: 0;
+}
+
+.opacity-50 {
+    opacity: 0.5;
+}
+
+.opacity-75 {
+    opacity: 0.75;
+}
+
+.opacity-100 {
+    opacity: 1;
+}
+
+/* Pointer events */
+.pointer-events-none {
+    pointer-events: none;
+}
+
+.pointer-events-auto {
+    pointer-events: auto;
+}
+
+/* Z-index states */
+.z-10 {
+    z-index: 10;
+}
+
+.z-20 {
+    z-index: 20;
+}
+
+.z-30 {
+    z-index: 30;
+}
+
+.z-40 {
+    z-index: 40;
+}
+
+.z-50 {
+    z-index: 50;
+}
+
+/* Modal open state */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* Dark mode states (future use) */
+@media (prefers-color-scheme: dark) {
+    .dark\:bg-gray-800 {
+        background-color: #1f2937;
+    }
+    
+    .dark\:text-white {
+        color: white;
+    }
+}

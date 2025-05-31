@@ -219,7 +219,7 @@ const server = http.createServer(async (req, res) => {
 watchForChanges();
 
 server.listen(PORT, () => {
-  console.log(`🚀 HealthIQ development server running at http://localhost:${PORT}`);
+  console.log(`🚀 Dots development server running at http://localhost:${PORT}`);
   console.log('🔄 Auto-reload enabled - browser will refresh on file changes');
   if (CLAUDE_API_KEY) {
     console.log('✅ Claude API key detected - Real API calls enabled');
@@ -230,7 +230,4 @@ server.listen(PORT, () => {
   console.log('\nPress Ctrl+C to stop');
 });
 
-// Open browser automatically
-const platform = process.platform;
-const openCommand = platform === 'darwin' ? 'open' : platform === 'win32' ? 'start' : 'xdg-open';
-exec(`${openCommand} http://localhost:${PORT}`);
+// Don't open browser automatically - it opens a new tab on every restart
