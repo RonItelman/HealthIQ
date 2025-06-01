@@ -268,25 +268,58 @@
     <!-- Toast notification -->
     <div class="toast" id="toast"></div>
 
-    <!-- Scripts - Order matters! -->
-    <script src="js/storage.js"></script>    <!-- Storage utilities -->
+    <!-- Scripts - Modular Architecture (Order matters!) -->
+    
+    <!-- Core Configuration -->
+    <script src="js/core/config.js"></script>
+    
+    <!-- Utilities -->
+    <script src="js/utils/TextProcessor.js"></script>
+    <script src="js/utils/DateFormatter.js"></script>
+    <script src="js/utils/ValidationHelper.js"></script>
+    <script src="js/utils/ExportHelper.js"></script>
+    
+    <!-- Data Models -->
+    <script src="js/data/models/LogEntry.js"></script>
+    <script src="js/data/models/AnalysisResult.js"></script>
+    <script src="js/data/models/HealthProfile.js"></script>
+    
+    <!-- Data Stores -->
+    <script src="js/data/stores/debug-store.js"></script>
+    <script src="js/data/stores/log-data-store.js"></script>
+    <script src="js/data/stores/analysis-data-store.js"></script>
+    
+    <!-- Legacy Support -->
+    <script src="js/storage.js"></script>    <!-- Storage utilities (legacy) -->
     <script src="js/api.js"></script>        <!-- API integration -->
-    <script src="js/debug-store.js"></script> <!-- Persistent debug logging -->
     <script src="js/debug-logger.js"></script> <!-- Debug logging system -->
     <script src="js/debug-modal.js"></script> <!-- Debug modal UI -->
     <script src="js/splash.js"></script>     <!-- Splash screen animation -->
-    <script src="js/log-data-store.js"></script> <!-- Raw log persistence -->
-    <script src="js/analysis-data-store.js"></script> <!-- Analysis persistence -->
+    
+    <!-- UI Components -->
+    <script src="js/managers/ui-manager/LogEntryTemplates.js"></script>
+    <script src="js/managers/ui-manager/LogRenderer.js"></script>
+    
+    <!-- Log Management -->
+    <script src="js/managers/log-manager/LogEntryFactory.js"></script>
+    <script src="js/managers/log-manager/LogAnalysisCoordinator.js"></script>
+    <script src="js/managers/log-manager/LogViewManager.js"></script>
+    <script src="js/managers/log-manager/LogManager.js"></script>
+    
+    <!-- Navigation and Menus -->
     <script src="js/main-menu.js"></script>  <!-- Main menu navigation -->
-    <script src="js/ui.js"></script>         <!-- UI rendering -->
+    
+    <!-- Legacy UI and Features (to be refactored) -->
+    <script src="js/ui.js"></script>         <!-- UI rendering (legacy) -->
     <script src="js/health-context.js"></script> <!-- Health context manager -->
     <script src="js/log-metadata.js"></script>   <!-- Log metadata manager -->
     <script src="js/health-categorizer.js"></script> <!-- Health categorizer -->
     <script src="js/health.js"></script>    <!-- Health features -->
-    <script src="js/logs.js"></script>       <!-- Log management -->
     <script src="js/think-modal.js"></script> <!-- Think modal -->
     <script src="js/pwa.js"></script>       <!-- PWA features -->
     <script src="js/events.js"></script>    <!-- Event handling -->
+    
+    <!-- Application Coordinator -->
     <script src="js/app.js"></script>       <!-- Main coordinator -->
 </body>
 </html>

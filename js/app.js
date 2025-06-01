@@ -54,10 +54,12 @@ const App = {
             await this.delay(300);
             
             // 5. Initialize storage and load data
-            LogManager.init();
+            // Create new modular LogManager instance
+            window.LogManager = new LogManager();
+            window.LogManager.init();
             if (window.DebugStore) {
                 DebugStore.success('LogManager initialized', {
-                    dataStoreStats: LogManager.getDataStoreStats()
+                    dataStoreStats: window.LogManager.getDataStoreStats()
                 }, 'APP');
             }
             
