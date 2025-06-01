@@ -1,46 +1,49 @@
-// Log Manager Module - Handles all log entry operations
+// Log Manager Module - Handles all log entry operations with secure data stores
 
 const LogManager = {
     // State
-    logEntries: [],
     currentView: 'entries', // 'entries', 'markdown', 'summary'
     
     // Initialize log manager
     init() {
-        this.loadEntries();
+        // New data stores are already loaded via their constructors
         this.updateStats();
+        console.log('LogManager initialized with new data stores');
     },
     
-    // Load entries from storage
-    loadEntries() {
-        const entries = Storage.loadLogEntries();
-        
-        // Migrate old entries to new format if needed
-        this.logEntries = entries.map(entry => {
-            // Check if entry needs migration
-            if (window.LogMetadata && window.LogMetadata.needsMigration(entry)) {
-                return window.LogMetadata.migrateOldEntry(entry);
-            }
-            return entry;
-        });
-        
-        // Save migrated entries back
-        if (entries.length > 0 && this.logEntries.some((e, i) => e !== entries[i])) {
-            this.saveEntries();
-        }
-    },
-    
-    // Save entries to storage
-    saveEntries() {
-        Storage.saveLogEntries(this.logEntries);
-    },
-    
-    // Get all entries
+    // Get all entries (combined raw logs with analysis)
     getEntries() {
-        return this.logEntries;
+        const rawLogs = LogDataStore.getAllLogEntries();
+        
+        // Combine with analysis data
+        return rawLogs.map(log => {
+            const analysis = AnalysisDataStore.getAnalysis(log.id);
+            
+            return {
+                // Raw log data
+                id: log.id,
+                timestamp: log.timestamp,
+                content: log.content,
+                
+                // Analysis data (if available)
+                hasAnalysis: !!analysis,
+                analysisStatus: analysis?.status || 'none',
+                claudeAnalysis: analysis?.message || '',
+                tags: analysis?.tags || [],
+                observations: analysis?.observations || [],
+                questions: analysis?.questions || [],
+                potentialPathways: analysis?.potentialPathways || [],
+                
+                // Combined for backward compatibility
+                analysis: analysis ? {
+                    claudeAnalysis: analysis.message,
+                    tags: analysis.tags
+                } : null
+            };
+        });
     },
     
-    // Create new log entry
+    // Create new log entry - SECURE IMMEDIATE PERSISTENCE
     async createEntry() {
         const content = UI.elements.logText.value.trim();
         
@@ -49,86 +52,83 @@ const LogManager = {
             return;
         }
         
-        // Create enriched entry with metadata
-        const entry = window.LogMetadata ? 
-            window.LogMetadata.createEnrichedLogEntry(content) :
-            {
-                id: Date.now(),
-                timestamp: new Date().toISOString(),
-                content: content,
-                analysis: null
-            };
-        
-        // Add to beginning of array
-        this.logEntries.unshift(entry);
-        
-        // Save immediately
-        this.saveEntries();
-        
-        // Clear input
-        UI.elements.logText.value = '';
-        
-        // Update UI
-        this.updateStats();
-        
-        // Show success
-        UI.showToast('Entry logged successfully!');
-        
-        // Analyze if health context is set and online
-        if (window.HealthContext && window.HealthContext.hasContext() && !PWAManager.isOffline) {
-            this.analyzeEntryInBackground(entry);
+        try {
+            // IMMEDIATE persistence to raw log store
+            const logEntry = LogDataStore.createLogEntry(content);
+            
+            // Clear input immediately after successful save
+            UI.elements.logText.value = '';
+            
+            // Update UI
+            this.updateStats();
+            
+            // Show success
+            UI.showToast('Entry logged successfully!');
+            
+            // Start analysis in background if health context exists
+            if (window.HealthContext && window.HealthContext.hasContext() && !PWAManager.isOffline) {
+                this.analyzeEntryInBackground(logEntry);
+            }
+            
+            return logEntry;
+            
+        } catch (error) {
+            console.error('Failed to create log entry:', error);
+            UI.showToast('Failed to save entry. Please try again.');
+            throw error;
         }
     },
     
-    // Analyze entry in background
+    // Analyze entry in background with separate data stores
     async analyzeEntryInBackground(entry) {
         try {
             console.log('Starting background analysis for entry:', entry);
+            
+            // Mark analysis as in progress
+            AnalysisDataStore.markAnalysisInProgress(entry.id);
+            
+            // Update UI if modal is open to show analysis started
+            if (UI.elements.logModal.style.display === 'block') {
+                this.renderCurrentView();
+            }
+            
             const analysis = await Health.analyzeLogEntry(entry);
             console.log('Analysis result:', analysis);
             
             if (analysis) {
-                // Update the entry with analysis
-                const entryIndex = this.logEntries.findIndex(e => e.id === entry.id);
-                console.log('Found entry at index:', entryIndex);
+                // Save analysis to separate store
+                const prompt = API.createLogEntryPrompt(entry);
+                const analysisData = {
+                    ...analysis,
+                    prompt: prompt
+                };
                 
-                if (entryIndex !== -1) {
-                    // Update using metadata manager if available
-                    if (window.LogMetadata) {
-                        const prompt = API.createLogEntryPrompt(entry);
-                        console.log('Updating with metadata manager...');
-                        window.LogMetadata.updateWithAnalysis(
-                            this.logEntries[entryIndex], 
-                            analysis.claudeAnalysis,
-                            prompt
-                        );
-                    } else {
-                        console.log('Updating with direct assignment...');
-                        this.logEntries[entryIndex].analysis = analysis;
-                    }
-                    
-                    console.log('Updated entry:', this.logEntries[entryIndex]);
-                    this.saveEntries();
-                    console.log('Entries saved successfully');
-                    
-                    // Update UI if modal is open
-                    if (UI.elements.logModal.style.display === 'block') {
-                        this.renderCurrentView();
-                    }
-                } else {
-                    console.error('Could not find entry to update with analysis');
+                AnalysisDataStore.saveAnalysis(entry.id, analysisData);
+                console.log('Analysis saved to AnalysisDataStore');
+                
+                // Update UI if modal is open
+                if (UI.elements.logModal.style.display === 'block') {
+                    this.renderCurrentView();
                 }
             } else {
                 console.log('No analysis returned from Health.analyzeLogEntry');
+                AnalysisDataStore.markAnalysisFailed(entry.id, { message: 'No analysis returned' });
             }
         } catch (error) {
             console.error('Background analysis failed:', error);
+            AnalysisDataStore.markAnalysisFailed(entry.id, error);
+            
+            // Update UI if modal is open to show failure
+            if (UI.elements.logModal.style.display === 'block') {
+                this.renderCurrentView();
+            }
         }
     },
     
     // Update statistics
     updateStats() {
-        UI.updateStats(this.logEntries);
+        const entries = this.getEntries(); // Get combined entries
+        UI.updateStats(entries);
     },
     
     // Show log modal
@@ -140,7 +140,8 @@ const LogManager = {
         this.renderCurrentView();
         
         // Celebrate if entries exist
-        if (this.logEntries.length > 0) {
+        const entries = this.getEntries();
+        if (entries.length > 0) {
             UI.celebrateViewButton();
         }
     },
@@ -185,47 +186,87 @@ const LogManager = {
     
     // Render current view
     renderCurrentView() {
+        const entries = this.getEntries(); // Get combined entries
+        
         switch (this.currentView) {
             case 'markdown':
-                UI.renderMarkdown(this.logEntries);
+                UI.renderMarkdown(entries);
                 break;
             case 'summary':
-                UI.renderSummary(this.logEntries);
+                UI.renderSummary(entries);
                 break;
             default:
-                UI.renderLogEntries(this.logEntries);
+                UI.renderLogEntries(entries);
         }
     },
     
     // Get today's entries count
     getTodayCount() {
         const today = new Date().toDateString();
-        return this.logEntries.filter(entry => 
+        const entries = this.getEntries();
+        return entries.filter(entry => 
             new Date(entry.timestamp).toDateString() === today
         ).length;
     },
     
-    // Delete entry (for future use)
+    // Delete entry (both raw log and analysis)
     deleteEntry(id) {
-        this.logEntries = this.logEntries.filter(e => e.id !== id);
-        this.saveEntries();
+        LogDataStore.deleteLogEntry(id);
+        AnalysisDataStore.deleteAnalysis(id);
         this.updateStats();
+        this.renderCurrentView();
     },
     
     // Search entries (for future use)
     searchEntries(searchTerm) {
-        return this.logEntries.filter(entry => 
+        const entries = this.getEntries();
+        return entries.filter(entry => 
             entry.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (entry.analysis && entry.analysis.claudeAnalysis.toLowerCase().includes(searchTerm.toLowerCase()))
+            (entry.claudeAnalysis && entry.claudeAnalysis.toLowerCase().includes(searchTerm.toLowerCase()))
         );
     },
     
-    // Clear all log entries
+    // Clear all log entries (both stores)
     clearAllEntries() {
-        this.logEntries = [];
-        this.saveEntries();
+        LogDataStore.clearAllData();
+        AnalysisDataStore.clearAllData();
         this.updateStats();
         this.renderCurrentView();
+    },
+    
+    // Get data store statistics
+    getDataStoreStats() {
+        return {
+            rawLogs: LogDataStore.getStats(),
+            analyses: AnalysisDataStore.getStats()
+        };
+    },
+    
+    // Export all data for backup
+    exportAllData() {
+        return {
+            rawLogs: LogDataStore.exportData(),
+            analyses: AnalysisDataStore.exportData(),
+            exportedAt: new Date().toISOString()
+        };
+    },
+    
+    // Import all data from backup
+    importAllData(data) {
+        try {
+            if (data.rawLogs) {
+                LogDataStore.importData(data.rawLogs);
+            }
+            if (data.analyses) {
+                AnalysisDataStore.importData(data.analyses);
+            }
+            this.updateStats();
+            this.renderCurrentView();
+            return true;
+        } catch (error) {
+            console.error('Failed to import data:', error);
+            return false;
+        }
     }
 };
 
