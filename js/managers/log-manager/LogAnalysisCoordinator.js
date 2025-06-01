@@ -41,6 +41,15 @@ class LogAnalysisCoordinator {
             scheduledAt: new Date().toISOString()
         });
         
+        // Emit scheduled event
+        if (window.EventBus) {
+            EventBus.emit('analysis:scheduled', {
+                entryId: logEntry.id,
+                queuePosition: this.analysisQueue.length,
+                estimatedWait: this.analysisQueue.length * 2000 // rough estimate
+            });
+        }
+        
         // Process queue if not already processing
         if (!this.isProcessing) {
             this.processQueue();
@@ -129,6 +138,15 @@ class LogAnalysisCoordinator {
             }, 'ANALYSIS_COORD');
         }
         
+        // Emit analysis started event
+        if (window.EventBus) {
+            EventBus.emit('analysis:started', {
+                entryId: logEntry.id,
+                attempt: queueItem.attempts + 1,
+                startTime: new Date().toISOString()
+            });
+        }
+        
         // Mark analysis as in progress
         this.markAnalysisInProgress(logEntry.id);
         
@@ -146,28 +164,45 @@ class LogAnalysisCoordinator {
             // Save successful analysis
             this.saveAnalysisResult(logEntry.id, analysisResult);
             
-            timer?.end();
+            const processingTime = timer ? timer.end() : null;
+            
+            // Emit analysis completed event
+            if (window.EventBus) {
+                EventBus.emit('analysis:completed', {
+                    entryId: logEntry.id,
+                    analysis: analysisResult,
+                    processingTime: processingTime,
+                    completedAt: new Date().toISOString()
+                });
+            }
             
             if (window.DebugStore) {
                 DebugStore.success('Analysis completed successfully', {
                     logId: logEntry.id,
                     hasMessage: !!analysisResult.message,
                     tagCount: analysisResult.tags?.length || 0,
-                    analysisTime: timer ? `${timer.end()}ms` : 'unknown'
+                    analysisTime: processingTime ? `${processingTime}ms` : 'unknown'
                 }, 'ANALYSIS_COORD');
             }
             
-            // Update UI if needed
-            this.notifyAnalysisComplete(logEntry.id);
-            
         } catch (error) {
-            timer?.end();
+            const processingTime = timer ? timer.end() : null;
+            
+            // Emit analysis failed event
+            if (window.EventBus) {
+                EventBus.emit('analysis:failed', {
+                    entryId: logEntry.id,
+                    error: error,
+                    attempt: queueItem.attempts + 1,
+                    willRetry: queueItem.attempts < this.maxRetries
+                });
+            }
             
             if (window.DebugStore) {
                 DebugStore.error('Analysis failed', {
                     logId: logEntry.id,
                     error: error.message,
-                    analysisTime: timer ? `${timer.end()}ms` : 'unknown'
+                    analysisTime: processingTime ? `${processingTime}ms` : 'unknown'
                 }, 'ANALYSIS_COORD');
             }
             

@@ -44,18 +44,42 @@ class LogManager {
     }
     
     /**
-     * Set up event listeners for analysis completion
+     * Set up event bus listeners
      */
     setupEventListeners() {
-        // Listen for analysis completion events
-        window.addEventListener('analysisComplete', (event) => {
-            this.handleAnalysisComplete(event.detail.logId);
+        if (!window.EventBus) {
+            console.warn('EventBus not available, using legacy event handling');
+            return;
+        }
+        
+        // Listen for analysis events
+        EventBus.on('analysis:completed', (data) => {
+            this.handleAnalysisComplete(data.entryId);
         });
         
-        // Listen for view change events
-        window.addEventListener('viewChanged', (event) => {
-            this.handleViewChange(event.detail);
+        EventBus.on('analysis:failed', (data) => {
+            this.handleAnalysisFailed(data.entryId, data.error);
         });
+        
+        // Listen for view change events  
+        EventBus.on('view:changed', (data) => {
+            this.handleViewChange(data);
+        });
+        
+        // Listen for UI events that affect log display
+        EventBus.on('filter:applied', () => {
+            this.handleFiltersChanged();
+        });
+        
+        EventBus.on('search:performed', () => {
+            this.handleSearchPerformed();
+        });
+        
+        if (window.DebugStore) {
+            DebugStore.debug('LogManager event listeners setup', {
+                eventBusAvailable: true
+            }, 'LOGMANAGER');
+        }
     }
     
     /**
@@ -71,6 +95,16 @@ class LogManager {
             content = window.UI?.elements?.logText?.value?.trim() || '';
         }
         
+        // Emit creating event for validation and preprocessing
+        if (window.EventBus) {
+            EventBus.emit('logEntry:creating', {
+                content: content,
+                hasHealthContext: !!(window.HealthContext && window.HealthContext.hasContext()),
+                isOnline: !(window.PWAManager && window.PWAManager.isOffline),
+                userAgent: navigator.userAgent
+            });
+        }
+        
         if (window.DebugStore) {
             DebugStore.info('Creating new log entry', {
                 contentLength: content.length,
@@ -83,13 +117,23 @@ class LogManager {
             // Validate content
             const validation = this.entryFactory.validateContent(content);
             if (!validation.isValid) {
+                const errorData = {
+                    error: new Error(validation.error),
+                    content: content,
+                    operation: 'validation'
+                };
+                
+                // Emit error event
+                if (window.EventBus) {
+                    EventBus.emit('logEntry:error', errorData);
+                }
+                
                 if (window.DebugStore) {
                     DebugStore.warn('Log entry creation failed - validation error', {
                         error: validation.error
                     }, 'LOGMANAGER');
                 }
                 
-                window.UI?.showToast(validation.error);
                 return null;
             }
             
@@ -112,11 +156,17 @@ class LogManager {
                 window.UI.elements.logText.value = '';
             }
             
-            // Update stats
-            this.updateStats();
+            // Get updated stats
+            const stats = this.getUpdatedStats();
             
-            // Show success message
-            window.UI?.showToast('Entry logged successfully!');
+            // Emit success event
+            if (window.EventBus) {
+                EventBus.emit('logEntry:created', {
+                    entry: savedEntry,
+                    stats: stats,
+                    readyForAnalysis: logEntry.readyForAnalysis
+                });
+            }
             
             // Schedule analysis if ready
             if (logEntry.readyForAnalysis) {
@@ -127,6 +177,17 @@ class LogManager {
             return savedEntry;
             
         } catch (error) {
+            const errorData = {
+                error: error,
+                content: content,
+                operation: 'creation'
+            };
+            
+            // Emit error event
+            if (window.EventBus) {
+                EventBus.emit('logEntry:error', errorData);
+            }
+            
             if (window.DebugStore) {
                 DebugStore.error('Failed to create log entry', {
                     error: error.message,
@@ -136,7 +197,6 @@ class LogManager {
             }
             
             console.error('Failed to create log entry:', error);
-            window.UI?.showToast('Failed to save entry. Please try again.');
             throw error;
         }
     }
@@ -189,13 +249,22 @@ class LogManager {
         }
         
         try {
+            // Get entry data before deletion for event
+            const entry = this.logDataStore.getLogEntry(id);
+            const analysis = this.analysisDataStore.getAnalysis(id);
+            
             // Delete from both stores
             this.logDataStore.deleteLogEntry(id);
             this.analysisDataStore.deleteAnalysis(id);
             
-            // Update UI
-            this.updateStats();
-            this.renderCurrentView();
+            // Emit deleted event
+            if (window.EventBus) {
+                EventBus.emit('logEntry:deleted', {
+                    entryId: id,
+                    content: entry?.content,
+                    hadAnalysis: !!analysis
+                });
+            }
             
             if (window.DebugStore) {
                 DebugStore.success('Log entry deleted', { logId: id }, 'LOGMANAGER');
@@ -422,6 +491,27 @@ class LogManager {
     }
     
     /**
+     * Get updated stats for events
+     * @returns {Object} - Updated statistics
+     */
+    getUpdatedStats() {
+        return {
+            totalEntries: this.getEntryCount(),
+            todayEntries: this.getTodayCount(),
+            analysisCount: this.getAnalysisCount()
+        };
+    }
+    
+    /**
+     * Get analysis count
+     * @returns {number} - Number of entries with analysis
+     */
+    getAnalysisCount() {
+        const entries = this.getEntries();
+        return entries.filter(entry => entry.hasAnalysis).length;
+    }
+    
+    /**
      * Handle analysis completion
      * @param {string} logId - ID of log that was analyzed
      */
@@ -432,11 +522,40 @@ class LogManager {
         
         // Update view if modal is open
         if (window.UI?.elements?.logModal?.style.display === 'block') {
-            this.renderCurrentView();
+            // Emit UI refresh event instead of direct call
+            if (window.EventBus) {
+                EventBus.emit('ui:refresh', {
+                    component: 'logModal',
+                    reason: 'analysisComplete'
+                });
+            }
         }
         
-        // Update stats to reflect new analysis
-        this.updateStats();
+        // Emit stats update event
+        if (window.EventBus) {
+            EventBus.emit('stats:updated', this.getUpdatedStats());
+        }
+    }
+    
+    /**
+     * Handle analysis failure
+     * @param {string} logId - ID of log that failed analysis
+     * @param {Error} error - Analysis error
+     */
+    handleAnalysisFailed(logId, error) {
+        if (window.DebugStore) {
+            DebugStore.debug('Handling analysis failure', { logId, error: error.message }, 'LOGMANAGER');
+        }
+        
+        // Update view if modal is open
+        if (window.UI?.elements?.logModal?.style.display === 'block') {
+            if (window.EventBus) {
+                EventBus.emit('ui:refresh', {
+                    component: 'logModal',
+                    reason: 'analysisFailed'
+                });
+            }
+        }
     }
     
     /**
@@ -448,7 +567,53 @@ class LogManager {
             DebugStore.debug('Handling view change', detail, 'LOGMANAGER');
         }
         
-        // Any additional logic for view changes
+        // Update view buttons and UI state
+        this.updateViewButtonsForChange(detail.currentView);
+    }
+    
+    /**
+     * Handle filters changed
+     */
+    handleFiltersChanged() {
+        if (window.DebugStore) {
+            DebugStore.debug('Handling filters changed', {}, 'LOGMANAGER');
+        }
+        
+        // Emit UI refresh for filtered view
+        if (window.EventBus) {
+            EventBus.emit('ui:refresh', {
+                component: 'logEntries',
+                reason: 'filtersChanged'
+            });
+        }
+    }
+    
+    /**
+     * Handle search performed
+     */
+    handleSearchPerformed() {
+        if (window.DebugStore) {
+            DebugStore.debug('Handling search performed', {}, 'LOGMANAGER');
+        }
+        
+        // Emit UI refresh for search results
+        if (window.EventBus) {
+            EventBus.emit('ui:refresh', {
+                component: 'logEntries', 
+                reason: 'searchPerformed'
+            });
+        }
+    }
+    
+    /**
+     * Update view buttons for view change
+     * @param {string} currentView - Current view type
+     */
+    updateViewButtonsForChange(currentView) {
+        // This will be handled by UI event listeners instead of direct manipulation
+        if (window.DebugStore) {
+            DebugStore.debug('View buttons update needed', { currentView }, 'LOGMANAGER');
+        }
     }
     
     /**

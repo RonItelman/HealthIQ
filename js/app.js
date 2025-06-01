@@ -53,7 +53,14 @@ const App = {
             
             await this.delay(300);
             
-            // 5. Initialize storage and load data
+            // 5. Initialize event-driven UI managers
+            window.ToastManager = new ToastManager();
+            window.StatsManager = new StatsManager();
+            if (window.DebugStore) {
+                DebugStore.success('UI managers initialized', {}, 'APP');
+            }
+            
+            // 6. Initialize storage and load data
             // Create new modular LogManager instance
             window.LogManager = new LogManager();
             window.LogManager.init();
@@ -63,7 +70,7 @@ const App = {
                 }, 'APP');
             }
             
-            // 6. Initialize health module
+            // 7. Initialize health module
             Health.init();
             if (window.DebugStore) {
                 DebugStore.success('Health module initialized', {}, 'APP');
@@ -71,19 +78,19 @@ const App = {
             
             await this.delay(200);
             
-            // 7. Setup all event handlers
+            // 8. Setup all event handlers
             EventHandler.init();
             if (window.DebugStore) {
                 DebugStore.success('EventHandler initialized', {}, 'APP');
             }
             
-            // 8. Initialize Think modal
+            // 9. Initialize Think modal
             ThinkModal.init();
             if (window.DebugStore) {
                 DebugStore.success('ThinkModal initialized', {}, 'APP');
             }
             
-            // 9. Initialize PWA features
+            // 10. Initialize PWA features
             PWAManager.init();
             if (window.DebugStore) {
                 DebugStore.success('PWAManager initialized', {}, 'APP');
@@ -96,12 +103,33 @@ const App = {
                 DebugStore.checkSystemHealth();
             }
             
-            console.log('Dots initialized successfully');
+            const totalTime = initTimer ? initTimer.end() : null;
+            
+            // Emit app initialization complete event
+            if (window.EventBus) {
+                EventBus.emit('app:initialized', {
+                    version: this.getVersion(),
+                    buildDate: new Date().toISOString(),
+                    initTime: totalTime,
+                    modules: {
+                        eventBus: true,
+                        toastManager: !!window.ToastManager,
+                        statsManager: !!window.StatsManager,
+                        logManager: !!window.LogManager,
+                        health: !!window.Health,
+                        ui: !!window.UI,
+                        pwa: !!window.PWAManager
+                    }
+                });
+            }
+            
+            console.log('Dots initialized successfully with event bus architecture');
             
             if (window.DebugStore) {
                 DebugStore.success('App initialization completed', {
-                    totalTime: initTimer ? `${initTimer.end()}ms` : 'unknown',
-                    modules: ['DebugLogger', 'DebugModal', 'UI', 'MainMenu', 'LogManager', 'Health', 'EventHandler', 'ThinkModal', 'PWAManager']
+                    totalTime: totalTime ? `${totalTime}ms` : 'unknown',
+                    modules: ['EventBus', 'ToastManager', 'StatsManager', 'LogManager', 'Health', 'EventHandler', 'ThinkModal', 'PWAManager'],
+                    eventBusEnabled: true
                 }, 'APP');
             }
             
