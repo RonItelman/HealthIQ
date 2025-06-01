@@ -109,18 +109,23 @@ const UI = {
                         
                         <!-- Section 2: Health Context -->
                         ${healthContext ? `
-                            <div class="log-section log-health-context">
+                            <div class="log-section log-health-context" data-entry-id="${entry.id}">
                                 <div class="log-section-title">
                                     <span class="material-symbols-outlined">medical_information</span>
                                     Health Context
+                                    <button class="health-context-toggle" onclick="UI.toggleHealthContext('${entry.id}')">
+                                        <span class="toggle-text">expand</span>
+                                    </button>
                                 </div>
-                                ${(healthContext.conditions && healthContext.conditions.length > 0) ? `
-                                    <div class="log-health-conditions">
-                                        Tracking: ${healthContext.conditions.join(', ')}
+                                <div class="health-context-content" style="display: none;">
+                                    ${(healthContext.conditions && healthContext.conditions.length > 0) ? `
+                                        <div class="log-health-conditions">
+                                            Tracking: ${healthContext.conditions.join(', ')}
+                                        </div>
+                                    ` : ''}
+                                    <div class="log-health-summary">
+                                        ${this.escapeHtml((healthContext.fullResponse || healthContext.summary || healthContext.description || '').substring(0, 150))}...
                                     </div>
-                                ` : ''}
-                                <div class="log-health-summary">
-                                    ${this.escapeHtml((healthContext.fullResponse || healthContext.summary || healthContext.description || '').substring(0, 150))}...
                                 </div>
                             </div>
                         ` : ''}
@@ -445,6 +450,22 @@ const UI = {
         }, 5000);
     },
     
+    // Toggle health context expansion
+    toggleHealthContext(entryId) {
+        const contextSection = document.querySelector(`.log-health-context[data-entry-id="${entryId}"]`);
+        if (!contextSection) return;
+        
+        const content = contextSection.querySelector('.health-context-content');
+        const toggle = contextSection.querySelector('.health-context-toggle .toggle-text');
+        
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            toggle.textContent = 'collapse';
+        } else {
+            content.style.display = 'none';
+            toggle.textContent = 'expand';
+        }
+    }
 };
 
 // Export for use in other modules

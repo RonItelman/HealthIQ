@@ -83,6 +83,36 @@
     color: #6b21a8;
 }
 
+.log-health-context .log-section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.health-context-toggle {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 8px;
+    margin-left: auto;
+    transition: all 0.2s ease;
+}
+
+.health-context-toggle:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 4px;
+}
+
+.health-context-toggle .toggle-text {
+    text-decoration: underline;
+}
+
+.health-context-content {
+    margin-top: 8px;
+}
+
 .log-health-conditions {
     font-weight: 600;
     margin-bottom: 4px;
