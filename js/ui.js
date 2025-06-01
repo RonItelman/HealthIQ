@@ -7,19 +7,8 @@ const UI = {
     // Initialize DOM elements
     init() {
         this.elements = {
-            // Loading screen
-            // loadingScreen removed
-            
-            // Header stats
-            totalCount: document.getElementById('totalCount'),
-            todayCount: document.getElementById('todayCount'),
-            
             // Main textarea
             logText: document.getElementById('logText'),
-            
-            // Buttons
-            viewBtn: document.getElementById('viewBtn'),
-            viewBtnIcon: document.getElementById('viewBtnIcon'),
             
             // Modals
             logModal: document.getElementById('logModal'),
@@ -43,17 +32,11 @@ const UI = {
         return;
     },
     
-    // Update stats
+    // Update stats - no-op since stats display was moved to main menu
     updateStats(logEntries) {
-        const total = logEntries.length;
-        const today = logEntries.filter(entry => {
-            const entryDate = new Date(entry.timestamp).toDateString();
-            const todayDate = new Date().toDateString();
-            return entryDate === todayDate;
-        }).length;
-        
-        this.elements.totalCount.textContent = total;
-        this.elements.todayCount.textContent = today;
+        // Stats are no longer displayed in the main interface
+        // This function is kept for backward compatibility
+        return;
     },
     
     // Show toast notification
@@ -439,15 +422,11 @@ const UI = {
         return unique.join(', ') || 'Various activities';
     },
     
-    // Celebrate view button
+    // Celebrate view button - no-op since view button was moved to main menu
     celebrateViewButton() {
-        this.elements.viewBtn.classList.add('celebrating');
-        this.elements.viewBtnIcon.textContent = 'celebration';
-        
-        setTimeout(() => {
-            this.elements.viewBtn.classList.remove('celebrating');
-            this.elements.viewBtnIcon.textContent = 'auto_stories';
-        }, 5000);
+        // View button celebration removed since button is now in main menu
+        // This function is kept for backward compatibility
+        return;
     },
     
     // Toggle health context expansion

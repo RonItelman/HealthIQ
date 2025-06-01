@@ -29,6 +29,39 @@
 
     <!-- Install Banner Removed -->
 
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+    
+    <!-- Slide-out Main Menu -->
+    <div class="main-menu" id="mainMenu">
+        <div class="menu-header">
+            <div class="menu-logo">
+                <img src="logo.svg" alt="Dots Logo" class="menu-logo-img">
+                <div class="menu-app-name">Dots</div>
+            </div>
+        </div>
+        
+        <nav class="menu-nav">
+            <button class="menu-item" id="menuHealthBtn">
+                <span class="material-symbols-outlined">medical_information</span>
+                <span class="menu-item-text">Health Issues</span>
+                <span class="menu-item-arrow">›</span>
+            </button>
+            
+            <button class="menu-item" id="menuViewBtn">
+                <span class="material-symbols-outlined">auto_stories</span>
+                <span class="menu-item-text">View Logs</span>
+                <span class="menu-item-arrow">›</span>
+            </button>
+            
+            <button class="menu-item" id="menuThinkBtn">
+                <span class="material-symbols-outlined">auto_awesome</span>
+                <span class="menu-item-text">Think</span>
+                <span class="menu-item-arrow">›</span>
+            </button>
+        </nav>
+    </div>
+
     <div class="container">
         <div class="header">
             <div class="header-left">
@@ -37,33 +70,6 @@
             </div>
         </div>
         
-        <div class="action-row">
-            <button class="btn btn-health btn-header" id="healthBtn">
-                <span class="material-symbols-outlined">medical_information</span>
-                <span class="icon-text">H</span>
-                <span class="btn-text">Health Issues</span>
-            </button>
-            <button class="btn btn-view btn-header" id="viewBtn">
-                <span class="material-symbols-outlined" id="viewBtnIcon">auto_stories</span>
-                <span class="icon-text">></span>
-                <div class="btn-stats">
-                    <div class="btn-stat">
-                        <span class="btn-stat-number" id="totalCount">0</span>
-                        <span class="btn-stat-label">Total</span>
-                    </div>
-                    <div class="btn-stat-divider"></div>
-                    <div class="btn-stat">
-                        <span class="btn-stat-number" id="todayCount">0</span>
-                        <span class="btn-stat-label">Today</span>
-                    </div>
-                </div>
-            </button>
-            <button class="btn btn-think btn-header" id="thinkBtn">
-                <span class="material-symbols-outlined">auto_awesome</span>
-                <span class="icon-text">✨</span>
-                <span class="btn-text">Think</span>
-            </button>
-        </div>
         <div id="log-input-container">
             <textarea 
                 class="text-area" 
@@ -225,6 +231,7 @@
     <script src="js/storage.js"></script>    <!-- Storage utilities -->
     <script src="js/api.js"></script>        <!-- API integration -->
     <script src="js/debug-logger.js"></script> <!-- Debug logging system -->
+    <script src="js/main-menu.js"></script>  <!-- Main menu navigation -->
     <script src="js/ui.js"></script>         <!-- UI rendering -->
     <script src="js/health-context.js"></script> <!-- Health context manager -->
     <script src="js/log-metadata.js"></script>   <!-- Log metadata manager -->

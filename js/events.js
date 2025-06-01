@@ -16,15 +16,7 @@ const EventHandler = {
             LogManager.createEntry();
         });
         
-        // View button
-        document.getElementById('viewBtn').addEventListener('click', () => {
-            LogManager.showLogModal();
-        });
-        
-        // Think button
-        document.getElementById('thinkBtn').addEventListener('click', () => {
-            this.showThinkView();
-        });
+        // Note: Health, View, and Think buttons are now handled by MainMenu class
     },
     
     // Setup modal action buttons

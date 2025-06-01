@@ -1,0 +1,180 @@
+/* Main Menu Components - Slide-out navigation */
+
+/* Menu Overlay */
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(2px);
+}
+
+.menu-overlay.overlay-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Main Menu Container */
+.main-menu {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 300px;
+    height: 100%;
+    background: white;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.main-menu.menu-open {
+    transform: translateX(320px);
+}
+
+/* Menu Header */
+.menu-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-secondary);
+    background: var(--primary-color);
+    color: white;
+}
+
+.menu-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.menu-logo-img {
+    width: 32px;
+    height: 32px;
+    filter: brightness(0) invert(1);
+}
+
+.menu-app-name {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* Menu Navigation */
+.menu-nav {
+    flex: 1;
+    padding: 0;
+    overflow-y: auto;
+}
+
+/* Menu Items */
+.menu-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid var(--border-light);
+    text-align: left;
+}
+
+.menu-item:hover {
+    background: var(--bg-hover);
+    color: var(--primary-color);
+}
+
+.menu-item:active {
+    background: var(--bg-active);
+}
+
+.menu-item .material-symbols-outlined {
+    font-size: 24px;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.menu-item-text {
+    flex: 1;
+    font-weight: 500;
+}
+
+.menu-item-arrow {
+    font-size: 18px;
+    color: var(--text-light);
+    opacity: 0.6;
+    transition: all 0.2s ease;
+}
+
+.menu-item:hover .menu-item-arrow {
+    opacity: 1;
+    transform: translateX(4px);
+}
+
+/* Header click area styling */
+.header-left {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: var(--radius-sm);
+    padding: 8px;
+    margin: -8px;
+}
+
+.header-left:hover {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.header-left.menu-active {
+    background: rgba(59, 130, 246, 0.2);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .main-menu {
+        width: 280px;
+        left: -280px;
+    }
+    
+    .main-menu.menu-open {
+        transform: translateX(280px);
+    }
+    
+    .menu-header {
+        padding: 16px;
+    }
+    
+    .menu-item {
+        padding: 18px 20px;
+    }
+    
+    .menu-logo-img {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .menu-app-name {
+        font-size: 18px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .main-menu {
+        width: 260px;
+        left: -260px;
+    }
+    
+    .main-menu.menu-open {
+        transform: translateX(260px);
+    }
+}

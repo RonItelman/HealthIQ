@@ -13,22 +13,25 @@ const App = {
             // 2. Initialize UI (sets up DOM references)
             UI.init();
             
-            // 3. Initialize storage and load data
+            // 3. Initialize main menu navigation
+            MainMenu.init();
+            
+            // 4. Initialize storage and load data
             LogManager.init();
             
-            // 4. Initialize health module
+            // 5. Initialize health module
             Health.init();
             
-            // 5. Setup all event handlers
+            // 6. Setup all event handlers
             EventHandler.init();
             
-            // 6. Initialize Think modal
+            // 7. Initialize Think modal
             ThinkModal.init();
             
-            // 7. Initialize PWA features
+            // 8. Initialize PWA features
             PWAManager.init();
             
-            // 8. Hide loading screen
+            // 9. Hide loading screen
             UI.hideLoadingScreen();
             
             console.log('Dots initialized successfully');
