@@ -109,6 +109,18 @@ Only include tags that represent actual relationships between the log entry and 
     
     // Parse JSON response from Claude
     parseJsonResponse(response) {
+        // Check if response is valid
+        if (!response || typeof response !== 'string') {
+            console.error('Invalid response:', response);
+            return {
+                message: 'No response received',
+                tags: [],
+                observations: [],
+                questions: [],
+                potential_pathways: []
+            };
+        }
+        
         try {
             // First try to parse as-is
             return JSON.parse(response);
