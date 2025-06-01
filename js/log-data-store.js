@@ -5,7 +5,22 @@ class LogDataStore {
         this.STORAGE_KEY = 'dots_raw_logs_v1';
         this.nextId = 1;
         this.logs = new Map(); // Use Map for O(1) lookups
+        
+        // Track initialization
+        if (window.DebugStore) {
+            DebugStore.info('LogDataStore initializing', { storageKey: this.STORAGE_KEY }, 'LOGSTORE');
+        }
+        
         this.loadFromStorage();
+        
+        // Log post-initialization state
+        if (window.DebugStore) {
+            DebugStore.info('LogDataStore initialized', {
+                logsCount: this.logs.size,
+                nextId: this.nextId,
+                storageKey: this.STORAGE_KEY
+            }, 'LOGSTORE');
+        }
     }
 
     // Generate next incremental ID
@@ -18,6 +33,8 @@ class LogDataStore {
 
     // Create new log entry - IMMEDIATELY persisted
     createLogEntry(content) {
+        const timer = window.DebugStore ? DebugStore.startTimer('createLogEntry') : null;
+        
         const timestamp = new Date().toISOString();
         const id = this.generateId();
         
@@ -28,12 +45,41 @@ class LogDataStore {
             version: 1 // For future schema changes
         };
 
-        // IMMEDIATE persistence - no waiting
-        this.logs.set(id, logEntry);
-        this.saveToStorage();
-        
-        console.log(`Raw log entry saved with ID: ${id}`);
-        return logEntry;
+        if (window.DebugStore) {
+            DebugStore.info('Creating log entry', {
+                id: id,
+                contentLength: content.length,
+                timestamp: timestamp
+            }, 'LOGSTORE');
+        }
+
+        try {
+            // IMMEDIATE persistence - no waiting
+            this.logs.set(id, logEntry);
+            this.saveToStorage();
+            
+            if (window.DebugStore) {
+                DebugStore.success('Log entry created and saved', {
+                    id: id,
+                    totalLogs: this.logs.size,
+                    storageKey: this.STORAGE_KEY
+                }, 'LOGSTORE');
+            }
+            
+            console.log(`Raw log entry saved with ID: ${id}`);
+            timer?.end();
+            return logEntry;
+            
+        } catch (error) {
+            if (window.DebugStore) {
+                DebugStore.error('Failed to create log entry', {
+                    error: error.message,
+                    id: id,
+                    content: content.substring(0, 100)
+                }, 'LOGSTORE');
+            }
+            throw error;
+        }
     }
 
     // Get log entry by ID
@@ -107,6 +153,8 @@ class LogDataStore {
 
     // Save to localStorage with error handling
     saveToStorage() {
+        const timer = window.DebugStore ? DebugStore.startTimer('saveToStorage') : null;
+        
         try {
             const data = {
                 logs: Array.from(this.logs.entries()),
@@ -114,11 +162,39 @@ class LogDataStore {
                 lastSaved: new Date().toISOString()
             };
             
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+            const dataString = JSON.stringify(data);
+            const sizeKB = (dataString.length / 1024).toFixed(2);
+            
+            if (window.DebugStore) {
+                DebugStore.info('Saving logs to storage', {
+                    logCount: this.logs.size,
+                    nextId: this.nextId,
+                    dataSize: `${sizeKB}KB`,
+                    storageKey: this.STORAGE_KEY
+                }, 'LOGSTORE');
+            }
+            
+            localStorage.setItem(this.STORAGE_KEY, dataString);
+            
+            if (window.DebugStore) {
+                DebugStore.success('Logs saved successfully', {
+                    logCount: this.logs.size,
+                    dataSize: `${sizeKB}KB`
+                }, 'LOGSTORE');
+            }
+            
             console.log(`Raw logs saved: ${this.logs.size} entries`);
+            timer?.end();
+            
         } catch (error) {
+            if (window.DebugStore) {
+                DebugStore.error('Save failed, attempting cleanup', {
+                    error: error.message,
+                    logCount: this.logs.size
+                }, 'LOGSTORE');
+            }
+            
             console.error('Failed to save raw logs to storage:', error);
-            // Try to free up space and retry once
             this.cleanupOldData();
             try {
                 const data = {
@@ -127,8 +203,23 @@ class LogDataStore {
                     lastSaved: new Date().toISOString()
                 };
                 localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                
+                if (window.DebugStore) {
+                    DebugStore.warn('Logs saved after cleanup', {
+                        logCount: this.logs.size
+                    }, 'LOGSTORE');
+                }
+                
                 console.log('Raw logs saved after cleanup');
+                timer?.end();
             } catch (retryError) {
+                if (window.DebugStore) {
+                    DebugStore.error('Critical storage failure', {
+                        originalError: error.message,
+                        retryError: retryError.message,
+                        logCount: this.logs.size
+                    }, 'LOGSTORE');
+                }
                 console.error('Critical: Unable to save raw logs even after cleanup:', retryError);
                 throw new Error('Storage failure - raw logs not saved');
             }
@@ -137,24 +228,82 @@ class LogDataStore {
 
     // Load from localStorage
     loadFromStorage() {
+        const timer = window.DebugStore ? DebugStore.startTimer('loadFromStorage') : null;
+        
+        if (window.DebugStore) {
+            DebugStore.info('Loading logs from storage', {
+                storageKey: this.STORAGE_KEY
+            }, 'LOGSTORE');
+        }
+        
         try {
             const data = localStorage.getItem(this.STORAGE_KEY);
+            
+            if (window.DebugStore) {
+                DebugStore.info('Retrieved data from localStorage', {
+                    dataExists: !!data,
+                    dataLength: data ? data.length : 0,
+                    dataSizeKB: data ? (data.length / 1024).toFixed(2) : 0
+                }, 'LOGSTORE');
+            }
+            
             if (data) {
                 const parsed = JSON.parse(data);
+                
+                if (window.DebugStore) {
+                    DebugStore.info('Parsed localStorage data', {
+                        logsArray: Array.isArray(parsed.logs),
+                        logsCount: parsed.logs ? parsed.logs.length : 0,
+                        nextId: parsed.nextId,
+                        lastSaved: parsed.lastSaved
+                    }, 'LOGSTORE');
+                }
                 
                 // Restore logs Map
                 this.logs = new Map(parsed.logs || []);
                 this.nextId = parsed.nextId || 1;
                 
+                if (window.DebugStore) {
+                    DebugStore.success('Logs loaded successfully', {
+                        logsCount: this.logs.size,
+                        nextId: this.nextId,
+                        lastSaved: parsed.lastSaved
+                    }, 'LOGSTORE');
+                }
+                
                 console.log(`Raw logs loaded: ${this.logs.size} entries, next ID: ${this.nextId}`);
             } else {
+                if (window.DebugStore) {
+                    DebugStore.warn('No existing logs found in localStorage', {
+                        storageKey: this.STORAGE_KEY,
+                        allKeys: Object.keys(localStorage)
+                    }, 'LOGSTORE');
+                }
                 console.log('No existing raw logs found, starting fresh');
             }
+            
+            timer?.end();
+            
         } catch (error) {
+            if (window.DebugStore) {
+                DebugStore.error('Failed to load logs from storage', {
+                    error: error.message,
+                    storageKey: this.STORAGE_KEY,
+                    rawData: localStorage.getItem(this.STORAGE_KEY)?.substring(0, 200)
+                }, 'LOGSTORE');
+            }
+            
             console.error('Failed to load raw logs from storage:', error);
             // Don't throw - start fresh if corrupted
             this.logs = new Map();
             this.nextId = 1;
+            
+            if (window.DebugStore) {
+                DebugStore.warn('Started fresh due to load error', {
+                    logsCount: 0,
+                    nextId: 1
+                }, 'LOGSTORE');
+            }
         }
     }
 

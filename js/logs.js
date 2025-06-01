@@ -45,16 +45,43 @@ const LogManager = {
     
     // Create new log entry - SECURE IMMEDIATE PERSISTENCE
     async createEntry() {
+        const timer = window.DebugStore ? DebugStore.startTimer('createLogEntry') : null;
         const content = UI.elements.logText.value.trim();
         
+        if (window.DebugStore) {
+            DebugStore.info('User attempting to create log entry', {
+                contentLength: content.length,
+                hasHealthContext: !!(window.HealthContext && window.HealthContext.hasContext()),
+                isOnline: !PWAManager.isOffline
+            }, 'LOGMANAGER');
+        }
+        
         if (!content) {
+            if (window.DebugStore) {
+                DebugStore.warn('Log entry creation failed - empty content', {}, 'LOGMANAGER');
+            }
             UI.showToast('Please enter some text to log');
             return;
         }
         
         try {
+            if (window.DebugStore) {
+                DebugStore.info('Creating log entry via LogDataStore', {
+                    content: content.substring(0, 100) + (content.length > 100 ? '...' : ''),
+                    contentLength: content.length
+                }, 'LOGMANAGER');
+            }
+            
             // IMMEDIATE persistence to raw log store
             const logEntry = LogDataStore.createLogEntry(content);
+            
+            if (window.DebugStore) {
+                DebugStore.success('Log entry created successfully', {
+                    logId: logEntry.id,
+                    timestamp: logEntry.timestamp,
+                    dataStoreStats: LogDataStore.getStats()
+                }, 'LOGMANAGER');
+            }
             
             // Clear input immediately after successful save
             UI.elements.logText.value = '';
@@ -67,12 +94,39 @@ const LogManager = {
             
             // Start analysis in background if health context exists
             if (window.HealthContext && window.HealthContext.hasContext() && !PWAManager.isOffline) {
+                if (window.DebugStore) {
+                    DebugStore.info('Starting background analysis', {
+                        logId: logEntry.id,
+                        hasHealthContext: true,
+                        isOnline: true
+                    }, 'LOGMANAGER');
+                }
                 this.analyzeEntryInBackground(logEntry);
+            } else {
+                if (window.DebugStore) {
+                    DebugStore.info('Skipping analysis', {
+                        logId: logEntry.id,
+                        hasHealthContext: !!(window.HealthContext && window.HealthContext.hasContext()),
+                        isOnline: !PWAManager.isOffline,
+                        reason: !window.HealthContext ? 'No HealthContext' : 
+                               !window.HealthContext.hasContext() ? 'No health context set' :
+                               PWAManager.isOffline ? 'Offline' : 'Unknown'
+                    }, 'LOGMANAGER');
+                }
             }
             
+            timer?.end();
             return logEntry;
             
         } catch (error) {
+            if (window.DebugStore) {
+                DebugStore.error('Failed to create log entry', {
+                    error: error.message,
+                    content: content.substring(0, 50),
+                    stack: error.stack
+                }, 'LOGMANAGER');
+            }
+            
             console.error('Failed to create log entry:', error);
             UI.showToast('Failed to save entry. Please try again.');
             throw error;
@@ -81,22 +135,72 @@ const LogManager = {
     
     // Analyze entry in background with separate data stores
     async analyzeEntryInBackground(entry) {
+        const timer = window.DebugStore ? DebugStore.startTimer('analyzeEntryInBackground') : null;
+        
+        if (window.DebugStore) {
+            DebugStore.info('Starting background analysis for log entry', {
+                logId: entry.id,
+                contentLength: entry.content.length,
+                timestamp: entry.timestamp,
+                hasHealthContext: !!(window.HealthContext && window.HealthContext.hasContext()),
+                isModalOpen: UI.elements.logModal.style.display === 'block'
+            }, 'LOGMANAGER');
+        }
+        
         try {
             console.log('Starting background analysis for entry:', entry);
             
             // Mark analysis as in progress
+            if (window.DebugStore) {
+                DebugStore.info('Marking analysis as in progress', {
+                    logId: entry.id
+                }, 'LOGMANAGER');
+            }
+            
             AnalysisDataStore.markAnalysisInProgress(entry.id);
             
             // Update UI if modal is open to show analysis started
             if (UI.elements.logModal.style.display === 'block') {
+                if (window.DebugStore) {
+                    DebugStore.debug('Updating UI to show analysis started', {
+                        logId: entry.id
+                    }, 'LOGMANAGER');
+                }
                 this.renderCurrentView();
             }
             
+            if (window.DebugStore) {
+                DebugStore.info('Calling Health.analyzeLogEntry', {
+                    logId: entry.id,
+                    healthModuleAvailable: !!window.Health
+                }, 'LOGMANAGER');
+            }
+            
+            const analysisTimer = window.DebugStore ? DebugStore.startTimer('healthAnalyzeLogEntry') : null;
             const analysis = await Health.analyzeLogEntry(entry);
+            analysisTimer?.end();
+            
             console.log('Analysis result:', analysis);
+            
+            if (window.DebugStore) {
+                DebugStore.info('Analysis completed', {
+                    logId: entry.id,
+                    hasResult: !!analysis,
+                    analysisKeys: analysis ? Object.keys(analysis) : null,
+                    analysisTime: analysisTimer ? `${analysisTimer.end()}ms` : 'unknown'
+                }, 'LOGMANAGER');
+            }
             
             if (analysis) {
                 // Save analysis to separate store
+                if (window.DebugStore) {
+                    DebugStore.info('Creating prompt and saving analysis', {
+                        logId: entry.id,
+                        analysisHasMessage: !!analysis.message,
+                        analysisHasTags: !!(analysis.tags && analysis.tags.length > 0)
+                    }, 'LOGMANAGER');
+                }
+                
                 const prompt = API.createLogEntryPrompt(entry);
                 const analysisData = {
                     ...analysis,
@@ -106,20 +210,58 @@ const LogManager = {
                 AnalysisDataStore.saveAnalysis(entry.id, analysisData);
                 console.log('Analysis saved to AnalysisDataStore');
                 
+                if (window.DebugStore) {
+                    DebugStore.success('Analysis saved successfully', {
+                        logId: entry.id,
+                        analysisStoreStats: AnalysisDataStore.getStats()
+                    }, 'LOGMANAGER');
+                }
+                
                 // Update UI if modal is open
                 if (UI.elements.logModal.style.display === 'block') {
+                    if (window.DebugStore) {
+                        DebugStore.debug('Updating UI to show completed analysis', {
+                            logId: entry.id
+                        }, 'LOGMANAGER');
+                    }
                     this.renderCurrentView();
                 }
             } else {
                 console.log('No analysis returned from Health.analyzeLogEntry');
+                
+                if (window.DebugStore) {
+                    DebugStore.warn('No analysis returned from Health module', {
+                        logId: entry.id,
+                        healthModuleAvailable: !!window.Health,
+                        analyzeLogEntryExists: !!(window.Health && window.Health.analyzeLogEntry)
+                    }, 'LOGMANAGER');
+                }
+                
                 AnalysisDataStore.markAnalysisFailed(entry.id, { message: 'No analysis returned' });
             }
+            
+            timer?.end();
+            
         } catch (error) {
+            if (window.DebugStore) {
+                DebugStore.error('Background analysis failed', {
+                    logId: entry.id,
+                    error: error.message,
+                    stack: error.stack,
+                    analysisTime: timer ? `${timer.end()}ms` : 'unknown'
+                }, 'LOGMANAGER');
+            }
+            
             console.error('Background analysis failed:', error);
             AnalysisDataStore.markAnalysisFailed(entry.id, error);
             
             // Update UI if modal is open to show failure
             if (UI.elements.logModal.style.display === 'block') {
+                if (window.DebugStore) {
+                    DebugStore.debug('Updating UI to show analysis failure', {
+                        logId: entry.id
+                    }, 'LOGMANAGER');
+                }
                 this.renderCurrentView();
             }
         }

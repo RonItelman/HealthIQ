@@ -3,6 +3,16 @@
 const App = {
     // Initialize the entire application
     async init() {
+        const initTimer = window.DebugStore ? DebugStore.startTimer('appInitialization') : null;
+        
+        if (window.DebugStore) {
+            DebugStore.info('App initialization started', {
+                userAgent: navigator.userAgent,
+                url: window.location.href,
+                timestamp: new Date().toISOString()
+            }, 'APP');
+        }
+        
         console.log('Dots starting...');
         
         // Show splash screen immediately
@@ -11,44 +21,100 @@ const App = {
         // Initialize modules in correct order
         try {
             // 1. Initialize debug logger first (captures all console output)
-            DebugLogger.init();
+            if (window.DebugLogger) {
+                DebugLogger.init();
+                if (window.DebugStore) {
+                    DebugStore.success('DebugLogger initialized', {}, 'APP');
+                }
+            }
+            
+            // 2. Initialize debug modal
+            if (window.DebugModal) {
+                DebugModal.init();
+                if (window.DebugStore) {
+                    DebugStore.success('DebugModal initialized', {}, 'APP');
+                }
+            }
             
             // Add slight delay to show splash animation
             await this.delay(500);
             
-            // 2. Initialize UI (sets up DOM references)
+            // 3. Initialize UI (sets up DOM references)
             UI.init();
+            if (window.DebugStore) {
+                DebugStore.success('UI initialized', {}, 'APP');
+            }
             
-            // 3. Initialize main menu navigation
+            // 4. Initialize main menu navigation
             MainMenu.init();
+            if (window.DebugStore) {
+                DebugStore.success('MainMenu initialized', {}, 'APP');
+            }
             
             await this.delay(300);
             
-            // 4. Initialize storage and load data
+            // 5. Initialize storage and load data
             LogManager.init();
+            if (window.DebugStore) {
+                DebugStore.success('LogManager initialized', {
+                    dataStoreStats: LogManager.getDataStoreStats()
+                }, 'APP');
+            }
             
-            // 5. Initialize health module
+            // 6. Initialize health module
             Health.init();
+            if (window.DebugStore) {
+                DebugStore.success('Health module initialized', {}, 'APP');
+            }
             
             await this.delay(200);
             
-            // 6. Setup all event handlers
+            // 7. Setup all event handlers
             EventHandler.init();
+            if (window.DebugStore) {
+                DebugStore.success('EventHandler initialized', {}, 'APP');
+            }
             
-            // 7. Initialize Think modal
+            // 8. Initialize Think modal
             ThinkModal.init();
+            if (window.DebugStore) {
+                DebugStore.success('ThinkModal initialized', {}, 'APP');
+            }
             
-            // 8. Initialize PWA features
+            // 9. Initialize PWA features
             PWAManager.init();
+            if (window.DebugStore) {
+                DebugStore.success('PWAManager initialized', {}, 'APP');
+            }
             
             await this.delay(300);
             
+            // Check system health
+            if (window.DebugStore) {
+                DebugStore.checkSystemHealth();
+            }
+            
             console.log('Dots initialized successfully');
+            
+            if (window.DebugStore) {
+                DebugStore.success('App initialization completed', {
+                    totalTime: initTimer ? `${initTimer.end()}ms` : 'unknown',
+                    modules: ['DebugLogger', 'DebugModal', 'UI', 'MainMenu', 'LogManager', 'Health', 'EventHandler', 'ThinkModal', 'PWAManager']
+                }, 'APP');
+            }
             
             // Hide splash screen after initialization
             this.hideSplash();
             
         } catch (error) {
+            if (window.DebugStore) {
+                DebugStore.error('App initialization failed', {
+                    error: error.message,
+                    stack: error.stack,
+                    totalTime: initTimer ? `${initTimer.end()}ms` : 'unknown'
+                }, 'APP');
+            }
+            
             console.error('Failed to initialize app:', error);
             this.hideSplash();
             UI.showToast('Error initializing app. Please refresh.');

@@ -42,6 +42,14 @@ const MainMenu = {
             EventHandler.showThinkView();
         });
         
+        // Debug Log menu item
+        document.getElementById('menuDebugBtn').addEventListener('click', () => {
+            this.closeMenu();
+            if (window.DebugModal) {
+                DebugModal.showModal();
+            }
+        });
+        
         // Close menu with escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.isOpen) {

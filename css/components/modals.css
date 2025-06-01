@@ -206,3 +206,220 @@
     color: #888;
     font-size: 11px;
 }
+
+/* Enhanced Debug Modal Styles */
+.debug-controls {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.debug-filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.debug-filter {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: 120px;
+}
+
+.debug-filter:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.debug-stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.debug-stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+}
+
+.debug-stat-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.debug-stat-value {
+    font-weight: 600;
+    color: #333;
+}
+
+.debug-stat-value.error {
+    color: #dc3545;
+}
+
+.debug-stat-value.warn {
+    color: #ffc107;
+}
+
+/* Enhanced Debug Log Entries */
+.debug-log-entry {
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 4px solid #ddd;
+    background: #fff;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.debug-log-entry.error {
+    border-left-color: #dc3545;
+    background: #fff5f5;
+}
+
+.debug-log-entry.warn {
+    border-left-color: #ffc107;
+    background: #fffdf0;
+}
+
+.debug-log-entry.info {
+    border-left-color: #17a2b8;
+    background: #f0faff;
+}
+
+.debug-log-entry.success {
+    border-left-color: #28a745;
+    background: #f0fff4;
+}
+
+.debug-log-entry.debug {
+    border-left-color: #6c757d;
+    background: #f8f9fa;
+}
+
+.debug-log-entry.debug-empty {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    border-left-color: #ddd;
+}
+
+.debug-log-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    font-size: 11px;
+}
+
+.debug-log-level {
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.debug-log-level.level-error {
+    background: #dc3545;
+    color: white;
+}
+
+.debug-log-level.level-warn {
+    background: #ffc107;
+    color: #212529;
+}
+
+.debug-log-level.level-info {
+    background: #17a2b8;
+    color: white;
+}
+
+.debug-log-level.level-success {
+    background: #28a745;
+    color: white;
+}
+
+.debug-log-level.level-debug {
+    background: #6c757d;
+    color: white;
+}
+
+.debug-log-source {
+    padding: 2px 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    font-size: 10px;
+    color: #495057;
+    font-weight: 500;
+}
+
+.debug-log-message {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 4px;
+    word-break: break-word;
+}
+
+.debug-log-data,
+.debug-log-stack {
+    margin-top: 6px;
+}
+
+.debug-log-data details,
+.debug-log-stack details {
+    cursor: pointer;
+}
+
+.debug-log-data summary,
+.debug-log-stack summary {
+    font-size: 11px;
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.debug-log-data pre,
+.debug-log-stack pre {
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    overflow-x: auto;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Mobile debug modal adjustments */
+@media (max-width: 768px) {
+    .debug-filters {
+        flex-direction: column;
+    }
+    
+    .debug-filter {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .debug-stats {
+        justify-content: space-between;
+    }
+    
+    .debug-log-header {
+        flex-wrap: wrap;
+    }
+    
+    .debug-log-content {
+        font-size: 11px;
+        max-height: 300px;
+    }
+}
