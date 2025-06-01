@@ -154,21 +154,28 @@ const Health = {
     async analyzeLogEntry(logEntry) {
         // Check if we have health context
         if (!window.HealthContext || !window.HealthContext.hasContext()) {
+            console.log('No health context available for analysis');
             return null; // No health context to analyze against
         }
         
         try {
+            console.log('Creating prompt for log entry:', logEntry);
             // Create prompt with health context automatically included
             const prompt = API.createLogEntryPrompt(logEntry);
+            console.log('Generated prompt:', prompt);
             
+            console.log('Calling Claude API...');
             const analysis = await API.callClaude(prompt);
+            console.log('Raw Claude response:', analysis);
             
-            // Extract tags from the analysis
-            const tags = this.extractTagsFromAnalysis(analysis);
+            // The analysis should be a JSON string, parse it properly
+            const parsedAnalysis = API.parseJsonResponse(analysis);
+            console.log('Parsed analysis:', parsedAnalysis);
             
             return {
-                claudeAnalysis: analysis,
-                tags: tags
+                claudeAnalysis: analysis, // Keep raw response
+                parsedResponse: parsedAnalysis, // Add parsed response
+                tags: parsedAnalysis.tags || []
             };
             
         } catch (error) {

@@ -97,6 +97,10 @@
                         <span class="material-symbols-outlined">analytics</span>
                         <span class="modal-btn-text">Analysis</span>
                     </button>
+                    <button class="modal-btn" id="debugBtn" title="Debug Log">
+                        <span class="material-symbols-outlined">bug_report</span>
+                        <span class="modal-btn-text">Debug</span>
+                    </button>
                     <button class="modal-btn" id="dataBtn" title="Copy JSON Data">
                         <span class="material-symbols-outlined">code</span>
                         <span class="modal-btn-text">Data</span>
@@ -129,16 +133,12 @@
                 </div>
             </div>
             <div class="modal-body health-modal-body">
-                <!-- Header with title and analyze button -->
+                <!-- Header with title -->
                 <div class="health-header-row">
                     <h2 class="modal-title">
                         <span class="material-symbols-outlined">medical_information</span>
                         Health Issues Description
                     </h2>
-                    <button class="btn btn-analyze" id="analyzeHealthBtn">
-                        <span class="material-symbols-outlined">psychology</span>
-                        <span class="btn-text">Analyze with Claude</span>
-                    </button>
                 </div>
                 
                 <!-- User Input Section -->
@@ -149,6 +149,10 @@
                         class="health-textarea"
                         placeholder="Describe your health conditions, observations, triggers, and tracking goals..."
                     ></textarea>
+                    <button class="btn btn-analyze" id="analyzeHealthBtn">
+                        <span class="material-symbols-outlined">psychology</span>
+                        <span class="btn-text">Analyze with Claude</span>
+                    </button>
                 </div>
                 
                 <!-- Claude's Response Section -->
@@ -181,12 +185,46 @@
         </div>
     </div>
 
+    <!-- Debug Log Modal -->
+    <div class="modal" id="debugModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-close-row">
+                    <button class="modal-btn modal-close-btn" id="debugCloseBtn" title="Close">
+                        <span class="material-symbols-outlined">close</span>
+                        <span class="icon-text">X</span>
+                    </button>
+                </div>
+                <div class="modal-actions">
+                    <button class="modal-btn" id="copyDebugBtn" title="Copy Debug Log">
+                        <span class="material-symbols-outlined">content_copy</span>
+                        <span class="modal-btn-text">Copy</span>
+                    </button>
+                    <button class="modal-btn clear-btn" id="clearDebugBtn" title="Clear Debug Log">
+                        <span class="material-symbols-outlined">delete_sweep</span>
+                        <span class="modal-btn-text">Clear</span>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <h2 class="modal-title">
+                    <span class="material-symbols-outlined">bug_report</span>
+                    Debug Console Log
+                </h2>
+                <div id="debugLogContent" class="debug-log-content">
+                    <!-- Debug log entries will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast notification -->
     <div class="toast" id="toast"></div>
 
     <!-- Scripts - Order matters! -->
     <script src="js/storage.js"></script>    <!-- Storage utilities -->
     <script src="js/api.js"></script>        <!-- API integration -->
+    <script src="js/debug-logger.js"></script> <!-- Debug logging system -->
     <script src="js/ui.js"></script>         <!-- UI rendering -->
     <script src="js/health-context.js"></script> <!-- Health context manager -->
     <script src="js/log-metadata.js"></script>   <!-- Log metadata manager -->

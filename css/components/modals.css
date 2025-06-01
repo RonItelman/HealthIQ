@@ -168,3 +168,41 @@
         flex-shrink: 0;
     }
 }
+
+/* Debug modal styles */
+.debug-log-content {
+    background: #1a1a1a;
+    color: #00ff00;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 16px;
+    border-radius: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    border: 1px solid #333;
+}
+
+.debug-log-entry {
+    margin-bottom: 4px;
+    padding: 2px 0;
+}
+
+.debug-log-entry.error {
+    color: #ff4444;
+}
+
+.debug-log-entry.warn {
+    color: #ffaa00;
+}
+
+.debug-log-entry.info {
+    color: #44aaff;
+}
+
+.debug-log-timestamp {
+    color: #888;
+    font-size: 11px;
+}

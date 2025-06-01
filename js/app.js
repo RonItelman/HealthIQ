@@ -7,25 +7,28 @@ const App = {
         
         // Initialize modules in correct order
         try {
-            // 1. Initialize UI first (sets up DOM references)
+            // 1. Initialize debug logger first (captures all console output)
+            DebugLogger.init();
+            
+            // 2. Initialize UI (sets up DOM references)
             UI.init();
             
-            // 2. Initialize storage and load data
+            // 3. Initialize storage and load data
             LogManager.init();
             
-            // 3. Initialize health module
+            // 4. Initialize health module
             Health.init();
             
-            // 4. Setup all event handlers
+            // 5. Setup all event handlers
             EventHandler.init();
             
-            // 5. Initialize Think modal
+            // 6. Initialize Think modal
             ThinkModal.init();
             
-            // 6. Initialize PWA features
+            // 7. Initialize PWA features
             PWAManager.init();
             
-            // 7. Hide loading screen
+            // 8. Hide loading screen
             UI.hideLoadingScreen();
             
             console.log('Dots initialized successfully');

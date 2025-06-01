@@ -83,29 +83,43 @@ const LogManager = {
     // Analyze entry in background
     async analyzeEntryInBackground(entry) {
         try {
+            console.log('Starting background analysis for entry:', entry);
             const analysis = await Health.analyzeLogEntry(entry);
+            console.log('Analysis result:', analysis);
+            
             if (analysis) {
                 // Update the entry with analysis
                 const entryIndex = this.logEntries.findIndex(e => e.id === entry.id);
+                console.log('Found entry at index:', entryIndex);
+                
                 if (entryIndex !== -1) {
                     // Update using metadata manager if available
                     if (window.LogMetadata) {
                         const prompt = API.createLogEntryPrompt(entry);
+                        console.log('Updating with metadata manager...');
                         window.LogMetadata.updateWithAnalysis(
                             this.logEntries[entryIndex], 
                             analysis.claudeAnalysis,
                             prompt
                         );
                     } else {
+                        console.log('Updating with direct assignment...');
                         this.logEntries[entryIndex].analysis = analysis;
                     }
+                    
+                    console.log('Updated entry:', this.logEntries[entryIndex]);
                     this.saveEntries();
+                    console.log('Entries saved successfully');
                     
                     // Update UI if modal is open
                     if (UI.elements.logModal.style.display === 'block') {
                         this.renderCurrentView();
                     }
+                } else {
+                    console.error('Could not find entry to update with analysis');
                 }
+            } else {
+                console.log('No analysis returned from Health.analyzeLogEntry');
             }
         } catch (error) {
             console.error('Background analysis failed:', error);
