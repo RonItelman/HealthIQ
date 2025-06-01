@@ -3,11 +3,12 @@
 const Splash = {
     // Configuration parameters
     config: {
-        dotCount: 25,
-        minSize: 8,
-        maxSize: 24,
-        animationSpeed: 0.02,
-        bounceHeight: 200,
+        dotCount: 12,
+        minSize: 15,
+        maxSize: 35,
+        bounceSpeed: 0.08,
+        bounceHeight: 60,
+        staggerDelay: 0.3,
         fadeInDuration: 800,
         fadeOutDuration: 600,
         colors: ['#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#c084fc'],
@@ -64,30 +65,42 @@ const Splash = {
         if (container) {
             this.canvas.width = container.offsetWidth;
             this.canvas.height = 300; // Fixed height for animation area
+            
+            // Recreate dots with new canvas dimensions
+            if (this.dots.length > 0) {
+                this.createDots();
+            }
         }
     },
     
-    // Create dot objects
+    // Create dot objects arranged in logo formation
     createDots() {
         this.dots = [];
+        const centerX = this.canvas.width / 2;
+        const centerY = this.canvas.height / 2;
+        const radius = 80;
+        
+        // Create dots in circular formation like a logo
         for (let i = 0; i < this.config.dotCount; i++) {
-            this.dots.push(this.createDot());
+            const angle = (i / this.config.dotCount) * Math.PI * 2;
+            const x = centerX + Math.cos(angle) * radius;
+            const y = centerY + Math.sin(angle) * radius;
+            
+            this.dots.push(this.createDot(x, y, i));
         }
     },
     
     // Create individual dot
-    createDot() {
+    createDot(x, y, index) {
         return {
-            x: Math.random() * this.canvas.width,
-            y: Math.random() * this.canvas.height,
-            size: Math.random() * (this.config.maxSize - this.config.minSize) + this.config.minSize,
-            color: this.config.colors[Math.floor(Math.random() * this.config.colors.length)],
-            vx: (Math.random() - 0.5) * 2, // Horizontal velocity
-            vy: (Math.random() - 0.5) * 2, // Vertical velocity
-            bounce: Math.random() * this.config.bounceHeight + 50,
-            phase: Math.random() * Math.PI * 2, // For wave motion
-            pulsePhase: Math.random() * Math.PI * 2, // For size pulsing
-            opacity: 0.8 + Math.random() * 0.2
+            x: x,
+            y: y,
+            originalY: y, // Store original position
+            size: this.config.minSize + (this.config.maxSize - this.config.minSize) * (0.5 + Math.random() * 0.5),
+            color: this.config.colors[index % this.config.colors.length],
+            bouncePhase: index * this.config.staggerDelay, // Staggered animation
+            bounceOffset: 0,
+            opacity: 0.9
         };
     },
     
@@ -108,33 +121,17 @@ const Splash = {
     
     // Update dot position and properties
     updateDot(dot, index) {
-        // Floating motion with wave-like movement
-        dot.phase += this.config.animationSpeed;
-        dot.pulsePhase += this.config.animationSpeed * 1.5;
+        // Update bounce phase
+        dot.bouncePhase += this.config.bounceSpeed;
         
-        // Wave motion
-        dot.x += Math.sin(dot.phase) * 0.5;
-        dot.y += Math.cos(dot.phase * 0.7) * 0.3;
+        // Calculate bounce offset (straight up and down)
+        dot.bounceOffset = Math.sin(dot.bouncePhase) * this.config.bounceHeight;
         
-        // Gentle drift
-        dot.x += dot.vx * 0.5;
-        dot.y += dot.vy * 0.5;
+        // Apply bounce to Y position only
+        dot.y = dot.originalY + dot.bounceOffset;
         
-        // Pulse size
-        const basePulse = Math.sin(dot.pulsePhase) * 0.3 + 1;
-        dot.currentSize = dot.size * basePulse;
-        
-        // Wrap around edges
-        if (dot.x < 0) dot.x = this.canvas.width;
-        if (dot.x > this.canvas.width) dot.x = 0;
-        if (dot.y < 0) dot.y = this.canvas.height;
-        if (dot.y > this.canvas.height) dot.y = 0;
-        
-        // Occasional direction change
-        if (Math.random() < 0.01) {
-            dot.vx = (Math.random() - 0.5) * 2;
-            dot.vy = (Math.random() - 0.5) * 2;
-        }
+        // Keep current size as original size (no pulsing)
+        dot.currentSize = dot.size;
     },
     
     // Draw individual dot
