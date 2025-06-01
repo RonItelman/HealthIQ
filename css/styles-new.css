@@ -15,6 +15,7 @@
 @import url('components/stats.css');
 @import url('components/toast.css');
 @import url('components/main-menu.css');
+@import url('components/splash.css');
 
 /* Views */
 @import url('views/logs.css');
