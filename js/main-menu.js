@@ -24,12 +24,9 @@ const MainMenu = {
         // Health Issues menu item
         document.getElementById('menuHealthBtn').addEventListener('click', () => {
             this.closeMenu();
-            // Open health modal directly
-            if (UI.elements && UI.elements.healthModal) {
-                UI.elements.healthModal.style.display = 'block';
-                document.body.style.overflow = 'hidden';
-                // Auto-resize textarea after modal opens
-                setTimeout(() => Health.autoResizeTextarea(), 100);
+            // Use Health module's method to show modal
+            if (Health && Health.showHealthModal) {
+                Health.showHealthModal();
             }
         });
         

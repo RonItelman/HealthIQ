@@ -40,26 +40,14 @@ const Health = {
                 '<p class="analysis-placeholder">Submit your issue for Claude to gain context</p>';
         }
         
-        // Update button to show context is active
-        if (window.HealthContext && window.HealthContext.hasContext()) {
-            document.getElementById('healthBtn').classList.add('has-context');
-        }
+        // Note: Health button visual indicator removed since button is now in main menu
     },
     
     // Setup event listeners
     setupEventListeners() {
-        // Health button click
-        document.getElementById('healthBtn').addEventListener('click', () => {
-            UI.elements.healthModal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-            // Auto-resize textarea after modal opens
-            setTimeout(() => this.autoResizeTextarea(), 100);
-        });
-        
         // Close health modal
         document.getElementById('healthCloseBtn').addEventListener('click', () => {
-            UI.elements.healthModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            this.closeHealthModal();
         });
         
         // Analyze health button
@@ -75,10 +63,27 @@ const Health = {
         // Click outside modal to close
         UI.elements.healthModal.addEventListener('click', (e) => {
             if (e.target === UI.elements.healthModal) {
-                UI.elements.healthModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
+                this.closeHealthModal();
             }
         });
+    },
+    
+    // Show health modal
+    showHealthModal() {
+        if (UI.elements && UI.elements.healthModal) {
+            UI.elements.healthModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            // Auto-resize textarea after modal opens
+            setTimeout(() => this.autoResizeTextarea(), 100);
+        }
+    },
+    
+    // Close health modal
+    closeHealthModal() {
+        if (UI.elements && UI.elements.healthModal) {
+            UI.elements.healthModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
     },
     
     // Auto-resize textarea to fit content
