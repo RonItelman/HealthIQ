@@ -291,11 +291,11 @@
     <script src="js/data/stores/log-data-store.js"></script>
     <script src="js/data/stores/analysis-data-store.js"></script>
     
+    <!-- Services -->
+    <script src="js/services/StorageService.js"></script>  <!-- Storage utilities -->
+    <script src="js/services/ApiService.js"></script>      <!-- API integration -->
+    
     <!-- Legacy Support -->
-    <script src="js/storage.js"></script>    <!-- Storage utilities (legacy) -->
-    <script src="js/api.js"></script>        <!-- API integration -->
-    <script src="js/debug-logger.js"></script> <!-- Debug logging system -->
-    <script src="js/debug-modal.js"></script> <!-- Debug modal UI -->
     <script src="js/splash.js"></script>     <!-- Splash screen animation -->
     
     <!-- UI Components -->
@@ -303,6 +303,7 @@
     <script src="js/managers/ui-manager/LogRenderer.js"></script>
     <script src="js/managers/ui-manager/ToastManager.js"></script>
     <script src="js/managers/ui-manager/StatsManager.js"></script>
+    <script src="js/managers/ui-manager/ThinkModalManager.js"></script>
     
     <!-- Log Management -->
     <script src="js/managers/log-manager/LogEntryFactory.js"></script>
@@ -310,18 +311,53 @@
     <script src="js/managers/log-manager/LogViewManager.js"></script>
     <script src="js/managers/log-manager/LogManager.js"></script>
     
-    <!-- Navigation and Menus -->
-    <script src="js/main-menu.js"></script>  <!-- Main menu navigation -->
+    <!-- Health Management -->
+    <script src="js/managers/health-manager/HealthProfileService.js"></script>
+    <script src="js/managers/health-manager/HealthAnalysisService.js"></script>
+    <script src="js/managers/health-manager/HealthModalManager.js"></script>
+    <script src="js/managers/health-manager/HealthCategorizerService.js"></script>
+    <script src="js/managers/health-manager/HealthManager.js"></script>
+    
+    <!-- Debug Management -->
+    <script src="js/managers/debug-manager/DebugModalManager.js"></script>
+    <script src="js/managers/debug-manager/DebugLoggerService.js"></script>
+    <script src="js/managers/debug-manager/DebugAnalyticsService.js"></script>
+    <script src="js/managers/debug-manager/DebugManager.js"></script>
+    
+    <!-- Main Menu Management -->
+    <script src="js/managers/main-menu-manager/MenuToggleService.js"></script>
+    <script src="js/managers/main-menu-manager/MenuNavigationService.js"></script>
+    <script src="js/managers/main-menu-manager/MenuUIService.js"></script>
+    <script src="js/managers/main-menu-manager/MainMenuManager.js"></script>
+    
+    <!-- Event Management -->
+    <script src="js/managers/event-manager/ButtonEventService.js"></script>
+    <script src="js/managers/event-manager/KeyboardEventService.js"></script>
+    <script src="js/managers/event-manager/ClipboardService.js"></script>
+    <script src="js/managers/event-manager/PWAEventService.js"></script>
+    <script src="js/managers/event-manager/EventManager.js"></script>
+    
+    <!-- Modal Management -->
+    <script src="js/managers/modal-manager/ModalStateService.js"></script>
+    <script src="js/managers/modal-manager/ModalUIService.js"></script>
+    <script src="js/managers/modal-manager/ModalContentService.js"></script>
+    <script src="js/managers/modal-manager/ModalManager.js"></script>
+    
+    <!-- Router Management -->
+    <script src="js/managers/router-manager/RouteStateService.js"></script>
+    <script src="js/managers/router-manager/RouteHandlerService.js"></script>
+    <script src="js/managers/router-manager/RouteNavigationService.js"></script>
+    <script src="js/managers/router-manager/RouterManager.js"></script>
+    
+    <!-- Splash Management -->
+    <script src="js/managers/splash-manager/SplashUIService.js"></script>
+    <script src="js/managers/splash-manager/SplashAnimationService.js"></script>
+    <script src="js/managers/splash-manager/SplashNavigationService.js"></script>
+    <script src="js/managers/splash-manager/SplashManager.js"></script>
     
     <!-- Legacy UI and Features (to be refactored) -->
     <script src="js/ui.js"></script>         <!-- UI rendering (legacy) -->
-    <script src="js/health-context.js"></script> <!-- Health context manager -->
-    <script src="js/log-metadata.js"></script>   <!-- Log metadata manager -->
-    <script src="js/health-categorizer.js"></script> <!-- Health categorizer -->
-    <script src="js/health.js"></script>    <!-- Health features -->
-    <script src="js/think-modal.js"></script> <!-- Think modal -->
     <script src="js/pwa.js"></script>       <!-- PWA features -->
-    <script src="js/events.js"></script>    <!-- Event handling -->
     
     <!-- Application Coordinator -->
     <script src="js/app.js"></script>       <!-- Main coordinator -->

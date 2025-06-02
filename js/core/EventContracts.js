@@ -12,6 +12,7 @@ class EventContracts {
         this.defineAnalysisEvents();
         this.defineUIEvents();
         this.defineHealthEvents();
+        this.defineRouterEvents();
         this.defineSystemEvents();
         
         if (window.DebugStore) {
@@ -196,6 +197,90 @@ class EventContracts {
             entryId: { required: true, type: 'string' },
             categories: { required: true, type: 'object' },
             confidence: { required: false, type: 'number' }
+        });
+    }
+    
+    /**
+     * Define router events
+     */
+    static defineRouterEvents() {
+        // Route navigation events
+        EventBus.defineContract('route:navigate', {
+            path: { required: true, type: 'string' },
+            data: { required: false, type: 'object' },
+            options: { required: false, type: 'object' }
+        });
+        
+        EventBus.defineContract('route:navigated', {
+            from: { required: false, type: 'object' },
+            to: { required: true, type: 'object' },
+            data: { required: false, type: 'object' },
+            options: { required: false, type: 'object' }
+        });
+        
+        EventBus.defineContract('route:changed', {
+            from: { required: false, type: 'object' },
+            to: { required: true, type: 'object' },
+            source: { required: true, type: 'string' }
+        });
+        
+        EventBus.defineContract('route:handled', {
+            route: { required: true, type: 'object' },
+            matchedRoute: { required: true, type: 'object' }
+        });
+        
+        EventBus.defineContract('route:error', {
+            route: { required: true, type: 'object' },
+            error: { required: true, type: 'string' }
+        });
+        
+        EventBus.defineContract('route:navigationError', {
+            path: { required: true, type: 'string' },
+            error: { required: true, type: 'string' }
+        });
+        
+        // Navigation events
+        EventBus.defineContract('navigation:started', {
+            path: { required: true, type: 'string' },
+            data: { required: false, type: 'object' },
+            options: { required: false, type: 'object' }
+        });
+        
+        EventBus.defineContract('navigation:failed', {
+            path: { required: true, type: 'string' },
+            error: { required: true, type: 'string' }
+        });
+        
+        EventBus.defineContract('navigation:requested', {
+            destination: { required: true, type: 'string' },
+            source: { required: true, type: 'string' }
+        });
+        
+        // App route events
+        EventBus.defineContract('app:routeChanged', {
+            route: { required: true, type: 'object' },
+            previousRoute: { required: false, type: 'object' },
+            routeData: { required: false, type: 'object' }
+        });
+        
+        EventBus.defineContract('app:homeActivated', {
+            route: { required: true, type: 'object' }
+        });
+        
+        EventBus.defineContract('app:logsActivated', {
+            route: { required: true, type: 'object' }
+        });
+        
+        EventBus.defineContract('app:healthActivated', {
+            route: { required: true, type: 'object' }
+        });
+        
+        EventBus.defineContract('app:thinkActivated', {
+            route: { required: true, type: 'object' }
+        });
+        
+        EventBus.defineContract('app:debugActivated', {
+            route: { required: true, type: 'object' }
         });
     }
     

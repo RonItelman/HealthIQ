@@ -28,11 +28,26 @@ const App = {
                 }
             }
             
-            // 2. Initialize debug modal
-            if (window.DebugModal) {
+            // 2. Initialize debug system
+            if (window.DebugManager) {
+                window.AppDebugManager = new DebugManager();
+                window.AppDebugManager.init();
+                if (window.DebugStore) {
+                    DebugStore.success('DebugManager initialized', {}, 'APP');
+                }
+            } else if (window.DebugModal) {
                 DebugModal.init();
                 if (window.DebugStore) {
                     DebugStore.success('DebugModal initialized', {}, 'APP');
+                }
+            }
+            
+            // 2.5 Initialize modal management system
+            if (window.ModalManager) {
+                window.AppModalManager = new ModalManager();
+                window.AppModalManager.init();
+                if (window.DebugStore) {
+                    DebugStore.success('ModalManager initialized', {}, 'APP');
                 }
             }
             
@@ -46,7 +61,12 @@ const App = {
             }
             
             // 4. Initialize main menu navigation
-            MainMenu.init();
+            if (window.MainMenuManager) {
+                window.AppMainMenuManager = new MainMenuManager();
+                window.AppMainMenuManager.init();
+            } else {
+                MainMenu.init(); // Fallback to legacy
+            }
             if (window.DebugStore) {
                 DebugStore.success('MainMenu initialized', {}, 'APP');
             }
@@ -71,7 +91,12 @@ const App = {
             }
             
             // 7. Initialize health module
-            Health.init();
+            if (window.HealthManager) {
+                window.AppHealthManager = new HealthManager();
+                window.AppHealthManager.init();
+            } else {
+                Health.init(); // Fallback to legacy
+            }
             if (window.DebugStore) {
                 DebugStore.success('Health module initialized', {}, 'APP');
             }
@@ -79,13 +104,23 @@ const App = {
             await this.delay(200);
             
             // 8. Setup all event handlers
-            EventHandler.init();
+            if (window.EventManager) {
+                window.AppEventManager = new EventManager();
+                window.AppEventManager.init();
+            } else {
+                EventHandler.init(); // Fallback to legacy
+            }
             if (window.DebugStore) {
                 DebugStore.success('EventHandler initialized', {}, 'APP');
             }
             
             // 9. Initialize Think modal
-            ThinkModal.init();
+            if (window.ThinkModalManager) {
+                window.AppThinkModalManager = new ThinkModalManager();
+                window.AppThinkModalManager.init();
+            } else {
+                ThinkModal.init(); // Fallback to legacy
+            }
             if (window.DebugStore) {
                 DebugStore.success('ThinkModal initialized', {}, 'APP');
             }
@@ -94,6 +129,18 @@ const App = {
             PWAManager.init();
             if (window.DebugStore) {
                 DebugStore.success('PWAManager initialized', {}, 'APP');
+            }
+            
+            // 11. Initialize client-side routing
+            if (window.RouterManager) {
+                window.AppRouterManager = new RouterManager();
+                window.AppRouterManager.init();
+                if (window.DebugStore) {
+                    DebugStore.success('RouterManager initialized', {
+                        currentRoute: window.AppRouterManager.getCurrentPath(),
+                        registeredRoutes: window.AppRouterManager.getStats().registeredRoutes
+                    }, 'APP');
+                }
             }
             
             await this.delay(300);
@@ -118,7 +165,8 @@ const App = {
                         logManager: !!window.LogManager,
                         health: !!window.Health,
                         ui: !!window.UI,
-                        pwa: !!window.PWAManager
+                        pwa: !!window.PWAManager,
+                        router: !!window.AppRouterManager
                     }
                 });
             }
@@ -128,13 +176,12 @@ const App = {
             if (window.DebugStore) {
                 DebugStore.success('App initialization completed', {
                     totalTime: totalTime ? `${totalTime}ms` : 'unknown',
-                    modules: ['EventBus', 'ToastManager', 'StatsManager', 'LogManager', 'Health', 'EventHandler', 'ThinkModal', 'PWAManager'],
+                    modules: ['EventBus', 'ToastManager', 'StatsManager', 'LogManager', 'Health', 'EventHandler', 'ThinkModal', 'PWAManager', 'RouterManager'],
                     eventBusEnabled: true
                 }, 'APP');
             }
             
-            // Hide splash screen after initialization
-            this.hideSplash();
+            // No longer auto-hide splash - handled by user interaction and routing
             
         } catch (error) {
             if (window.DebugStore) {
@@ -153,7 +200,12 @@ const App = {
     
     // Show splash screen
     showSplash() {
-        if (window.Splash) {
+        // Initialize SplashManager if available, otherwise fallback to legacy
+        if (window.SplashManager) {
+            window.AppSplashManager = new SplashManager();
+            window.AppSplashManager.init();
+            window.AppSplashManager.show();
+        } else if (window.Splash) {
             Splash.init();
             Splash.show();
         }
@@ -161,10 +213,10 @@ const App = {
     
     // Hide splash screen
     hideSplash() {
-        if (window.Splash) {
-            setTimeout(() => {
-                Splash.hide();
-            }, 800); // Show for a bit longer to appreciate the animation
+        // The new splash manager handles hiding via user interaction and routing
+        // No automatic hiding anymore - user must click/tap to continue
+        if (window.DebugStore) {
+            DebugStore.info('Splash hide requested - now handled by user interaction', {}, 'APP');
         }
     },
     
